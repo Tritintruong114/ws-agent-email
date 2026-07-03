@@ -48,6 +48,7 @@ Solopreneur email-centric (buyer=user=admin), rành công nghệ (quen OAuth/ext
 - **Purpose (1 dòng):** Biến inbox đã được agent xử lý thành phần trách nhiệm còn lại hôm nay — ai cần mình trả lời, ai cần mình nhắc, cái gì bị trả lại, cái gì có thể đóng hoặc bỏ qua.
 - **Serves:** J1 (Cao) + J2 (Cao) + J4 (Cao–TB). Bước Surface của loop → non-negotiable v0; đồng thời là màn duy nhất user thấy agent đã **Phân loại → Quản lý → Điều phối** trước khi đẩy sang S3.
 - **User-day moment:** mỗi sáng lướt "ai chưa trả lời / ai vừa trả lời"; và khi được nhắc.
+- **Information hierarchy, ĐÃ CHỐT 2026-07-03:** **Command center là chính, audit trail là phụ.** Above-the-fold ưu tiên câu trả lời "hôm nay còn bao nhiêu việc cần anh quyết và việc nào cần xử trước"; không biến S2 thành dashboard kỹ thuật. Audit chỉ hiện dưới dạng trace compact + chip/tooltip + "Vì sao nổi?" trên từng row để user kiểm chứng khi cần. Nếu phải chọn giữa nhanh-quyết và nhiều-giải-thích, ưu tiên nhanh-quyết.
 - **Must-show:** **header 2 dòng, ĐÃ CHỐT 2026-07-02** — "{total_processed} email đã xử lý · {decisions_needed} việc cần anh xử lý hôm nay" (hiệu ứng "agent đã lọc hộ", không phải "còn bao nhiêu email chưa đọc" — Agent-Domain-Spec §8 Điều phối). Ngay dưới header phải có **Agent work trace** 3 nhịp: **Phân loại** `{classified_count}` thread → **Quản lý** `{tracking_count}` thread đang sống (`monitoring`/`sent_pending_reply`/`snoozed`, không hiện trong queue) → **Điều phối** `{decisions_needed}` việc cần người xử lý hôm nay. Trace này là reassurance: agent vẫn đang theo dõi phần không hiện, không phải bỏ sót. Bên dưới là 4 nhóm theo thứ tự khẩn cấp — **`bounced`** (mail bị trả lại, ghim đầu) → **`reply_needs_action`** ("Cần bạn trả lời" — đối tác hỏi thêm, bạn là điểm nghẽn, KHÔNG phải đóng) → **`reply_proposed_close`** ("Đã có reply — xác nhận đóng") → **`awaiting_review`/`draft_ready`** ("Cần follow-up", thread đang chờ đối tác + đã chờ bao lâu + lý do nổi). Trong nhóm "Cần follow-up", thread `value_type=deprioritized` gắn tag **"Có thể bỏ qua"** và thu gọn — KHÔNG phải nhóm thứ 5; **LUÔN hiện số lượng** (vd "71") ngay trên tag để minh bạch, nhưng KHÔNG cộng vào `decisions_needed`. Đây là 4 bucket UI cuối cùng ánh xạ từ 13+ state backend — không hiển thị raw inbox/state nào khác ngoài 4 bucket này.
 - **Per-row must-show:** mỗi row không chỉ có subject/sender; bắt buộc hiển thị `waiting_on`, `reason_summary`, `last_meaningful_snippet`, `last_user_sent_at`/aging, `suggested_next_date`, `confidence_label`, `value_type`, và `next_action_hint`. Ví dụ row đúng tinh thần: "Lan hỏi chiết khấu năm, chưa chốt · chờ đối tác 5 ngày · draft sẵn · confidence cao · money". Row `reply_needs_action` phải nói rõ "Bạn đang giữ bóng"; row `reply_proposed_close` phải nói rõ "agent đề xuất đóng, cần anh xác nhận"; row `bounced` phải nói rõ "pipeline đang kẹt vì mail không tới". Nếu không show các field này, màn chỉ là list reminder, chưa phải agent điều phối.
 - **Core-loop visibility:** mỗi bucket/row cần gắn nhãn nhỏ cho bước loop hiện tại: `Detect` (mới phát hiện) · `Surface` (đang nổi hôm nay) · `Draft ready` (đã soạn, mở S3 để duyệt) · `Track reply` (đã có reply/ask/bounce) · `Closed/Snoozed` (outcome sau action). Đây là nhãn trạng thái nội bộ, không phải nav; mục tiêu là giúp user hiểu agent đang chạy vòng `Detect → Surface → Draft → Approve & Send → Track`.
@@ -125,14 +126,14 @@ Solopreneur email-centric (buyer=user=admin), rành công nghệ (quen OAuth/ext
 
 ## MVP cut line
 
-- **v0 (ship the loop):** S1 (gate) · S2 (Surface + agent work trace + reply-confirm + bounced + memory surface) · S3 (Draft+Approve + confirm-close + To:) · S4 (config tối thiểu + memory confirmation).
+- **v0 (ship the loop):** S1 (gate) · S2 (command center first + compact agent work trace + reply-confirm + bounced + memory surface) · S3 (Draft+Approve + confirm-close + To:) · S4 (config tối thiểu + memory confirmation).
 - **Off-dashboard (v0):** digest noti → S2; NDR noti; reply-tracking nền.
 - **Deferred:** J6 re-engage · analytics · team · auto-send (hard defer) · Outlook.
 
 ## Flows (state-transition chains)
 
 - **Onboarding:** `S1.first-run → Nối Gmail → S1.loading (quét+học giọng) → S2.first-run`
-- **Core nudge (J1+J2+J3):** `noti sáng → S2 agent work trace → mở thread → S3 → (Viết lại/Sửa) → Duyệt và gửi (To: bind) → S3.done → S2 (sent_pending_reply)`
+- **Core nudge (J1+J2+J3):** `noti sáng → S2 command center → mở thread → S3 → (Viết lại/Sửa) → Duyệt và gửi (To: bind) → S3.done → S2 (sent_pending_reply)` · audit phụ: `S2 → Vì sao nổi? / trace compact` khi user cần kiểm chứng.
 - **Reply → xác nhận đóng (spec §4):** `Track nền phát hiện reply (conf cao) → S2 nhóm "Đã có reply" → S3.confirm-close → (Đóng) → closed → S2` · nhánh: `(Chưa phải reply) → monitoring`
 - **NDR (spec §5/§16):** `Track phát hiện bounce → noti + S2 row bounced → S3 alert → (user sửa địa chỉ) → monitoring | (Bỏ qua) → dismissed`
 - **Track nền:** `có reply conf thấp → giữ monitoring (gắn cờ)` · `quá cadence, chưa cap → awaiting_review` · `đạt cap → capped`
@@ -145,7 +146,7 @@ Mọi HIGH job trace qua ≥1 flow. Không dead-end.
 
 ## Navigation shape (light)
 
-Lần đầu: chỉ S1 (full-screen gate). Sau khi nối: **S2 là home** (master), tên hiển thị **"Việc cần xử lý"**, mở bằng agent work trace rồi phân **4 nhóm theo thứ tự** Mail bị trả lại → Cần bạn trả lời → Đã có reply → Cần follow-up (+ tag "Có thể bỏ qua" thu gọn bên trong nhóm cuối) — xem Agent-Domain-Spec §8 Điều phối. Khi có memory suggestion, S2 hiện banner nhẹ nhưng không áp rule tại chỗ. **S3** master-detail từ S2 (draft / confirm-close / needs-reply / bounced-alert view tùy state thread). **S4** drawer từ S2 để chỉnh cadence và xác nhận Operating Memory. Noti (digest/NDR) deep-link S2.
+Lần đầu: chỉ S1 (full-screen gate). Sau khi nối: **S2 là home** (master), tên hiển thị **"Việc cần xử lý"**. S2 mở bằng command header + 4 nhóm theo thứ tự Mail bị trả lại → Cần bạn trả lời → Đã có reply → Cần follow-up (+ tag "Có thể bỏ qua" thu gọn bên trong nhóm cuối); agent work trace chỉ là lớp reassurance compact, không chiếm trung tâm. Khi có memory suggestion, S2 hiện banner nhẹ nhưng không áp rule tại chỗ. **S3** master-detail từ S2 (draft / confirm-close / needs-reply / bounced-alert view tùy state thread). **S4** drawer từ S2 để chỉnh cadence và xác nhận Operating Memory. Noti (digest/NDR) deep-link S2.
 
 ## Nav & headings spec (for external generator — pencil…)
 
