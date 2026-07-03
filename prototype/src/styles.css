@@ -310,3 +310,28 @@ textarea { min-height: 170px; resize: vertical; line-height: 1.55; }
   .side { position: static; }
   .digest h2 { font-size: 21px; }
 }
+
+.tabs button:disabled { opacity: .42; cursor: not-allowed; }
+.onboarding { display: grid; gap: var(--cw-sp-4); }
+.onboarding-head h2 { margin-bottom: var(--cw-sp-3); max-width: 760px; }
+.stepper { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: var(--cw-sp-2); margin-top: var(--cw-sp-3); }
+.step { display: flex; align-items: center; gap: 8px; padding: 9px 10px; border: var(--cw-hairline) solid var(--cw-border); border-radius: var(--cw-r-md); color: var(--cw-ink-3); background: var(--cw-card-2); font-size: var(--cw-fs-sm); }
+.step i { width: 22px; height: 22px; border-radius: var(--cw-r-round); display: grid; place-items: center; background: var(--cw-card); font-style: normal; font-family: var(--cw-mono); font-size: var(--cw-fs-micro); }
+.step.active { color: var(--cw-accent); background: var(--cw-accent-soft); border-color: var(--cw-accent-line); font-weight: 600; }
+.risk-options { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--cw-sp-2); margin-top: var(--cw-sp-3); }
+.risk-option { text-align: left; border: var(--cw-hairline) solid var(--cw-border); background: var(--cw-card); border-radius: var(--cw-r-md); padding: 12px; color: var(--cw-ink); transition: all var(--cw-dur-fast) var(--cw-ease); }
+.risk-option:hover { background: var(--cw-card-2); }
+.risk-option.selected { background: var(--cw-accent-soft); border-color: var(--cw-accent-line); box-shadow: inset 3px 0 0 var(--cw-accent); }
+.risk-option span { display: block; color: var(--cw-ink-2); font-size: var(--cw-fs-sm); margin-top: 4px; line-height: 1.45; }
+.profile-grid { display: grid; grid-template-columns: minmax(0,1fr) 320px; gap: var(--cw-sp-4); }
+.profile-list { display: grid; gap: var(--cw-sp-2); margin-top: var(--cw-sp-3); }
+.profile-item { display: grid; grid-template-columns: 34px minmax(0,1fr); gap: var(--cw-sp-3); border: var(--cw-hairline) solid var(--cw-border); border-radius: var(--cw-r-md); padding: 12px; background: var(--cw-card); }
+.profile-item h3 { margin: 0; }
+.profile-item p { margin-bottom: 8px; }
+.profile-item ul { margin: 0; padding-left: 18px; color: var(--cw-ink-2); font-size: var(--cw-fs-sm); line-height: 1.5; }
+.rank { width: 28px; height: 28px; border-radius: var(--cw-r-round); display: grid; place-items: center; background: var(--cw-card-2); font-family: var(--cw-mono); font-weight: 600; color: var(--cw-ink-2); }
+.profile-item.bad .rank { color: #dc2626; background: rgba(220,38,38,.12); }
+.profile-item.warn .rank { color: #d97706; background: #fef3c7; }
+.profile-item.info .rank { color: var(--cw-teal); background: rgba(90,147,201,.14); }
+.profile-item.ok .rank { color: var(--cw-green); background: var(--cw-green-soft); }
+@media (max-width: 880px) { .stepper, .risk-options, .profile-grid { grid-template-columns: 1fr; } }

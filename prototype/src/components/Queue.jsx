@@ -3,14 +3,14 @@ import { buckets, metrics } from '../fixtures.js';
 import { Button, Card, Kpi, Pill } from './bits.jsx';
 
 export default function Queue({ state, setState, openWhy, goDraft }) {
-  if (!state.scanned) return <Card className="empty"><div className="big">✉️</div><h2>Chưa có queue</h2><p>Kết nối Gmail và quét inbox để dựng hàng đợi trách nhiệm.</p></Card>;
+  if (!state.profileConfirmed) return <Card className="empty"><div className="big">✉️</div><h2>Queue chưa mở</h2><p>Xác nhận Risk Profile Draft trong onboarding trước. Queue này là output của calibration, không phải inbox thô.</p></Card>;
   const due = state.threads.filter(t => t.value !== 'deprioritized').length;
   return <div className="queue-layout">
     <div className="main-col">
       <Card className="digest">
         <div className="between"><Pill tone="ok">Agent đã lọc inbox</Pill><Button onClick={openWhy}>Xem coverage</Button></div>
-        <h2>80 email mới · chỉ còn {due} việc cần anh xử lý hôm nay.</h2>
-        <p>Đây không phải inbox. Đây là phần trách nhiệm còn lại sau khi agent đã phân loại, theo dõi và bỏ qua an toàn phần còn lại.</p>
+        <h2>80 email đã xử lý · chỉ còn {due} quyết định cần anh hôm nay.</h2>
+        <p>Đây không phải inbox thô. Đây là phần trách nhiệm còn lại sau khi agent áp dụng Risk Profile anh đã xác nhận.</p>
         <div className="kpi-grid">{metrics(state).map(m => <Kpi key={m.label} {...m} />)}</div>
       </Card>
       {state.memorySuggestion && <Card className="memory"><div className="between"><b>Agent học được 2 pattern từ cách anh xử lý tuần này</b><Button onClick={() => setState(s => ({ ...s, memorySuggestion: false }))}>Đã hiểu</Button></div><p>Ưu tiên money risk trước reputation risk; ACME nên nằm priority cao hơn.</p></Card>}
