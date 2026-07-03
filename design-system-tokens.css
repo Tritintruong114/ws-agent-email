@@ -1,0 +1,96 @@
+/* Auto-extracted from /Users/admin/.claude/plugins/cache/clawexperts/usecase-factory/0.3.0/design-system/Openclaw_Design_System.html by scripts/extract-design-tokens.sh */
+/* Do NOT edit by hand — re-run the script when the design system changes. */
+
+[data-theme="light"] {
+  --cw-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --cw-mono: 'Inter', system-ui, -apple-system, sans-serif;
+  --cw-canvas: #fff9f9;
+  --cw-frame: #fff9f9;
+  --cw-bg: #ffffff;
+  --cw-card: #ffffff;
+  --cw-card-2: #f5eef0;
+  --cw-border: rgba(40,20,24,0.07);
+  --cw-border-strong: rgba(40,20,24,0.13);
+  --cw-ink: #1c1a1b;
+  --cw-ink-2: #6b6469;
+  --cw-ink-3: #a59ca1;
+  --cw-accent: #1c1c1e;
+  --cw-accent-h: #3a3a40;
+  --cw-accent-soft: rgba(28,28,30,0.06);
+  --cw-accent-soft-h: rgba(28,28,30,0.10);
+  --cw-accent-line: rgba(28,28,30,0.22);
+  --cw-green: #3f9b63;
+  --cw-green-soft: rgba(63,155,99,0.13);
+  --cw-teal: #5a93c9;
+  --cw-glass: rgba(255,255,255,0.66);
+  --cw-glass-2: rgba(255,255,255,0.86);
+  --cw-glass-line: rgba(255,255,255,0.85);
+  --cw-scrim: rgba(40,20,24,0.30);
+  --cw-fs-h1: 34px;
+  --cw-fs-h2: 18px;
+  --cw-fs-title: 16px;
+  --cw-fs-body: 14px;
+  --cw-fs-sm: 13px;
+  --cw-fs-meta: 12.5px;
+  --cw-fs-label: 11.5px;
+  --cw-fs-micro: 11px;
+  --cw-track-tight: -0.026em;
+  --cw-track-snug: -0.014em;
+  --cw-track-body: -0.006em;
+  --cw-track-label: 0.06em;
+  --cw-sp-1: 4px;
+  --cw-sp-2: 8px;
+  --cw-sp-3: 12px;
+  --cw-sp-4: 16px;
+  --cw-sp-5: 20px;
+  --cw-sp-6: 24px;
+  --cw-sp-8: 32px;
+  --cw-sp-10: 40px;
+  --cw-h-chip: 34px;
+  --cw-h-btn: 38px;
+  --cw-h-btn-sm: 32px;
+  --cw-h-btn-lg: 44px;
+  --cw-h-search: 50px;
+  --cw-shadow: 0 8px 30px 0 rgba(0,0,0,0.08);
+  --cw-shadow-sm: 0 4px 20px 0 rgba(0,0,0,0.05);
+  --cw-shadow-glass: none;
+  --cw-r-sm: 9px;
+  --cw-r-md: 12px;
+  --cw-r-lg: 16px;
+  --cw-r-xl: 20px;
+  --cw-r-2xl: 24px;
+  --cw-r-round: 999px;
+  --cw-hairline: 0.5px;
+  --cw-ease: cubic-bezier(.22,1,.36,1);
+  --cw-dur-fast: .14s;
+  --cw-dur: .18s;
+  --cw-dur-slow: .28s;
+}
+
+[data-theme="dark"] {
+  --cw-canvas: #15100f;
+  --cw-frame: #1a1413;
+  --cw-bg: #211a19;
+  --cw-card: #241d1c;
+  --cw-card-2: #2e2624;
+  --cw-border: rgba(255,240,238,0.08);
+  --cw-border-strong: rgba(255,240,238,0.15);
+  --cw-ink: #f5ece9;
+  --cw-ink-2: #b3a8a5;
+  --cw-ink-3: #7a6f6c;
+  --cw-accent: #f0564d;
+  --cw-accent-h: #f56a62;
+  --cw-accent-soft: rgba(240,86,77,0.16);
+  --cw-accent-soft-h: rgba(240,86,77,0.24);
+  --cw-accent-line: rgba(240,86,77,0.32);
+  --cw-green: #4faf76;
+  --cw-green-soft: rgba(79,175,118,0.16);
+  --cw-teal: #5e95cb;
+  --cw-glass: rgba(40,32,31,0.62);
+  --cw-glass-2: rgba(48,39,37,0.85);
+  --cw-glass-line: rgba(255,255,255,0.10);
+  --cw-scrim: rgba(0,0,0,0.6);
+  --cw-shadow: 0 8px 30px 0 rgba(0,0,0,0.45);
+  --cw-shadow-sm: 0 4px 20px 0 rgba(0,0,0,0.28);
+  --cw-shadow-glass: none;
+}
