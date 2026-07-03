@@ -34,7 +34,7 @@ export default function App() {
       <button className={tab==='settings'?'active':''} onClick={()=>setTab('settings')} disabled={!canUseApp}>{COPY.tabs.settings}</button>
     </nav>
     {tab === 'onboarding' && <Onboarding state={state} setState={setState} openEvidence={()=>setEvidence(true)} goQueue={()=>setTab('queue')} />}
-    {tab === 'queue' && <Queue state={state} setState={setState} openWhy={()=>setEvidence(true)} goDraft={()=>setTab('draft')} />}
+    {tab === 'queue' && <Queue state={state} setState={setState} openWhy={()=>setEvidence(true)} goDraft={()=>setTab('draft')} openSettings={()=>setTab('settings')} />}
     {tab === 'draft' && <Draft state={state} setState={setState} openSandbox={()=>setSandbox(true)} />}
     {tab === 'settings' && <Settings state={state} setState={setState} openWhy={()=>setEvidence(true)} />}
     {evidence && <EvidenceModal onClose={()=>setEvidence(false)} />}
