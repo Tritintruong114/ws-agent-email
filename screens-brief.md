@@ -7,7 +7,7 @@
 ## Design system (REQUIRED — skin source)
 
 - **Location:** OpenClaw Design System (bundled demo) — `~/.claude/plugins/cache/clawexperts/usecase-factory/0.3.0/design-system/Openclaw_Design_System.html`
-- **Tokens file:** `doc/ws-email-agent/design-system-tokens.css` (88 token, light+dark, `--cw-*`; auto-extract từ HTML trên)
+- **Tokens file:** `design-system-tokens.css` (88 token, light+dark, `--cw-*`; auto-extract từ HTML trên)
 - **Components file:** `Openclaw_Design_System.html` (component shapes trong cùng file đóng gói)
 - **Buildable palette:** OpenClaw component set (card, button, pill/badge, list-row, drawer, field, toggle) — design-a-screen chấm palette-gap theo bộ này.
 
