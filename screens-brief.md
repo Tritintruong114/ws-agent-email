@@ -42,24 +42,27 @@ Solopreneur email-centric (buyer=user=admin), rành công nghệ (quen OAuth/ext
   - Action labels: primary = "Kết nối Gmail"
   - Empty-state: Kết nối Gmail để agent bắt đầu tìm thread đang chờ trả lời.
 
-### S2 — Hàng đợi "Cần follow-up" (+ nhóm "Đã có reply" + row bounced)
+### S2 — Today responsibility queue
 
-- **Projects (spec):** §4 `awaiting_review` + `reply_proposed_close` + `bounced` · §8 D1/D4/D6 · §9 priority · §16 digest/NDR notify.
-- **Purpose (1 dòng):** Thấy ngay mọi thread đang chờ mình + thread đối tác vừa trả lời — để xử đúng việc, không rớt ai.
-- **Serves:** J1 (Cao) + J2 (Cao) + J4 (Cao–TB). Bước Surface của loop → non-negotiable v0.
+- **Projects (spec):** §3 Thread fields (`waiting_on`, `reason_summary`, `last_meaningful_snippet`, `suggested_next_date`, `value_type`, `confidence_label`, `next_action_hint`) · §4 `awaiting_review` + `reply_needs_action` + `reply_proposed_close` + `bounced` · §8 D1/D4/D6/D12/D13 + điều phối hàng ngày · §9 priority/value · §15 Operating Memory signals · §16 digest/NDR notify.
+- **Purpose (1 dòng):** Biến inbox đã được agent xử lý thành phần trách nhiệm còn lại hôm nay — ai cần mình trả lời, ai cần mình nhắc, cái gì bị trả lại, cái gì có thể đóng hoặc bỏ qua.
+- **Serves:** J1 (Cao) + J2 (Cao) + J4 (Cao–TB). Bước Surface của loop → non-negotiable v0; đồng thời là màn duy nhất user thấy agent đã **Phân loại → Quản lý → Điều phối** trước khi đẩy sang S3.
 - **User-day moment:** mỗi sáng lướt "ai chưa trả lời / ai vừa trả lời"; và khi được nhắc.
-- **Must-show:** **header 2 dòng, ĐÃ CHỐT 2026-07-02** — "{total_processed} email đã xử lý · {decisions_needed} việc cần anh xử lý hôm nay" (hiệu ứng "agent đã lọc hộ", không phải "còn bao nhiêu email chưa đọc" — Agent-Domain-Spec §8 Điều phối) · bên dưới là 4 nhóm theo thứ tự khẩn cấp — **`bounced`** (mail bị trả lại, ghim đầu) → **`reply_needs_action`** ("Cần bạn trả lời" — đối tác hỏi thêm, bạn là điểm nghẽn, KHÔNG phải đóng) → **`reply_proposed_close`** ("Đã có reply — xác nhận đóng") → **`awaiting_review`/`draft_ready`** ("Cần follow-up", thread đang chờ đối tác + đã chờ bao lâu + lý do nổi) · trong nhóm "Cần follow-up", thread `value_type=deprioritized` gắn tag **"Có thể bỏ qua"** và thu gọn — KHÔNG phải nhóm thứ 5; **LUÔN hiện số lượng** (vd "71") ngay trên tag để minh bạch, nhưng KHÔNG cộng vào `decisions_needed`. Đây là 4 bucket UI cuối cùng ánh xạ từ 13+ state backend (Agent-Domain-Spec §8 Điều phối) — không hiển thị state nào khác ngoài 4 bucket này.
-- **Actions (mỗi cái → outcome):** mở thread cần nhắc → `S3` (draft) · mở thread "đã có reply" → `S3.confirm-close` · mở thread "cần bạn trả lời" → `S3.needs-reply` (xem reply + "Mở trong Gmail") · snooze → rời queue, hẹn lại (§4 snoozed) · dismiss → **rời queue 1 lần** (`dismissed`, KHÔNG ghi exclude — spec §11) · mở row bounced → `S3` cảnh báo bounced.
-- **States — display:** empty = không thread nào chờ ("Agent đang theo dõi N thread") · first-run = đang dựng hàng đợi · loading · error = không quét được · done = thread xử xong rời nhóm.
-- **States — outcome:** mở → S3 (draft hoặc confirm-close) · snooze → snoozed · dismiss → dismissed (1 lần) · bounced → S3 alert.
-- **Why a screen (not chat/noti):** cần thấy nhiều thread + so sánh độ trễ + phân nhóm (chờ / đã trả lời / bounced) — chat/noti không làm được.
-- **Palette-gap:** aging indicator theo ngưỡng ngày (cần token màu cảnh báo — spec §14/§19); nhóm-phân-loại trong list.
+- **Must-show:** **header 2 dòng, ĐÃ CHỐT 2026-07-02** — "{total_processed} email đã xử lý · {decisions_needed} việc cần anh xử lý hôm nay" (hiệu ứng "agent đã lọc hộ", không phải "còn bao nhiêu email chưa đọc" — Agent-Domain-Spec §8 Điều phối). Ngay dưới header phải có **Agent work trace** 3 nhịp: **Phân loại** `{classified_count}` thread → **Quản lý** `{tracking_count}` thread đang sống (`monitoring`/`sent_pending_reply`/`snoozed`, không hiện trong queue) → **Điều phối** `{decisions_needed}` việc cần người xử lý hôm nay. Trace này là reassurance: agent vẫn đang theo dõi phần không hiện, không phải bỏ sót. Bên dưới là 4 nhóm theo thứ tự khẩn cấp — **`bounced`** (mail bị trả lại, ghim đầu) → **`reply_needs_action`** ("Cần bạn trả lời" — đối tác hỏi thêm, bạn là điểm nghẽn, KHÔNG phải đóng) → **`reply_proposed_close`** ("Đã có reply — xác nhận đóng") → **`awaiting_review`/`draft_ready`** ("Cần follow-up", thread đang chờ đối tác + đã chờ bao lâu + lý do nổi). Trong nhóm "Cần follow-up", thread `value_type=deprioritized` gắn tag **"Có thể bỏ qua"** và thu gọn — KHÔNG phải nhóm thứ 5; **LUÔN hiện số lượng** (vd "71") ngay trên tag để minh bạch, nhưng KHÔNG cộng vào `decisions_needed`. Đây là 4 bucket UI cuối cùng ánh xạ từ 13+ state backend — không hiển thị raw inbox/state nào khác ngoài 4 bucket này.
+- **Per-row must-show:** mỗi row không chỉ có subject/sender; bắt buộc hiển thị `waiting_on`, `reason_summary`, `last_meaningful_snippet`, `last_user_sent_at`/aging, `suggested_next_date`, `confidence_label`, `value_type`, và `next_action_hint`. Ví dụ row đúng tinh thần: "Lan hỏi chiết khấu năm, chưa chốt · chờ đối tác 5 ngày · draft sẵn · confidence cao · money". Row `reply_needs_action` phải nói rõ "Bạn đang giữ bóng"; row `reply_proposed_close` phải nói rõ "agent đề xuất đóng, cần anh xác nhận"; row `bounced` phải nói rõ "pipeline đang kẹt vì mail không tới". Nếu không show các field này, màn chỉ là list reminder, chưa phải agent điều phối.
+- **Core-loop visibility:** mỗi bucket/row cần gắn nhãn nhỏ cho bước loop hiện tại: `Detect` (mới phát hiện) · `Surface` (đang nổi hôm nay) · `Draft ready` (đã soạn, mở S3 để duyệt) · `Track reply` (đã có reply/ask/bounce) · `Closed/Snoozed` (outcome sau action). Đây là nhãn trạng thái nội bộ, không phải nav; mục tiêu là giúp user hiểu agent đang chạy vòng `Detect → Surface → Draft → Approve & Send → Track`.
+- **Meta-core surface trên S2:** khi Operating Memory có đề xuất chờ xác nhận, S2 hiện một banner nhẹ phía trên nhóm bucket: "Agent học được 2 pattern từ cách anh xử lý tuần này" với 1–2 chip có thể xem nhanh, ví dụ `Anh thường bỏ qua thread FYI một lần` hoặc `Khách ACME nên ưu tiên cao hơn`. CTA: "Xem đề xuất" → mở S4 đúng khối "Đề xuất từ Operating Memory". Không áp rule tại S2, không làm S2 thành settings; chỉ surface để meta-core không bị chôn trong drawer.
+- **Actions (mỗi cái → outcome):** mở thread cần nhắc → `S3` (draft) · mở thread "đã có reply" → `S3.confirm-close` · mở thread "cần bạn trả lời" → `S3.needs-reply` (xem reply + "Mở trong Gmail") · snooze → rời queue, hẹn lại (§4 snoozed) · dismiss → **rời queue 1 lần** (`dismissed`, KHÔNG ghi exclude — spec §11) và ghi signal cho Operating Memory (chỉ đề xuất pattern, không tự exclude) · mở row bounced → `S3` cảnh báo bounced · mở "Vì sao nổi?" → inline explanation từ `reason_summary` + signals §6/§9 · mở meta-core banner → `S4.memory-suggestions`.
+- **States — display:** empty = không thread nào cần quyết nhưng vẫn hiện "Agent đang theo dõi N thread, M thread đang chờ an toàn" · first-run = đang dựng hàng đợi + đang học giọng/cadence ban đầu · loading = skeleton 4 bucket + trace "đang phân loại/điều phối" · error = không quét được Gmail, nêu last successful scan · done = thread xử xong rời nhóm và counts giảm · **memory-suggestion-present** = có banner Operating Memory phía trên bucket · **all-safe** = không có `decisions_needed`, chỉ reassurance "không có thread rủi ro cao bị bỏ quên".
+- **States — outcome:** mở → S3 (draft hoặc confirm-close hoặc needs-reply hoặc bounced-alert) · snooze → row rời queue, `snoozed`, trace chuyển sang "đang chờ an toàn" · dismiss → `dismissed` 1 lần + ghi memory signal · bounced → S3 alert · xem đề xuất memory → S4.memory-suggestions · done-all → `all-safe`.
+- **Why a screen (not chat/noti):** cần thấy nhiều thread + so sánh độ trễ + phân nhóm + hiểu vì sao agent nổi từng việc + reassurance rằng phần còn lại đang được theo dõi. Chat/noti chỉ đẩy digest; nó không cho user audit được pipeline điều phối, cũng không surface được meta-core suggestion một cách có kiểm soát.
+- **Palette-gap:** aging indicator theo ngưỡng ngày (cần token màu cảnh báo — spec §14/§19); nhóm-phân-loại trong list; **agent work trace** compact stepper; row explanation drawer/inline "Vì sao nổi?"; banner Operating Memory suggestion; confidence/value chips; collapsed "Có thể bỏ qua" group.
 - **Copy:**
-  - Page title: Cần follow-up
-  - Subtitle: Xem thread nào đang chờ trả lời và ai vừa phản hồi, để không bỏ sót lead.
+  - Page title: Việc cần xử lý
+  - Subtitle: Agent đã lọc inbox; đây là phần còn cần anh quyết.
   - Section headings (thứ tự hiển thị): Mail bị trả lại · Cần bạn trả lời · Đã có reply · Cần follow-up
-  - Action labels: primary = "Mở thread" · secondary = "Hẹn lại" · "Bỏ qua"
-  - Empty-state: Hiện không có thread nào đang chờ bạn trả lời.
+  - Action labels: primary = "Mở thread" · secondary = "Hẹn lại" · "Bỏ qua" · "Vì sao nổi?" · "Xem đề xuất"
+  - Empty-state: Không có việc cần anh xử lý; agent vẫn đang theo dõi các thread còn lại.
 
 ### S3 — Chi tiết thread + Draft + Duyệt (+ To:, + confirm-close, + bounced alert)
 
@@ -114,7 +117,7 @@ Solopreneur email-centric (buyer=user=admin), rành công nghệ (quen OAuth/ext
 | §8 D13 value_type=deprioritized | — (spec) | S2 tag "Có thể bỏ qua" trong nhóm "Cần follow-up" (KHÔNG phải nhóm riêng) | đóng gap "Not Worth Following"; GAP-12 heuristic đã chốt |
 | §5 NDR / bounced | — (spec) | noti + row bounced S2 + S3 alert | mới, đóng finding #15 |
 | §11 send approval + To: | — (spec) | S3 (To: + Duyệt và gửi) | đóng finding #8 |
-| §11/§15 Meta-core suggestions (ưu tiên/loại trừ/hạ cap) | — (spec) | S4 khối "Đề xuất từ Operating Memory" | mới 2026-07-02 — đóng dead-end-CTA-in-waiting (đã thêm Must-show tuần trước, thiếu action+outcome tới giờ mới có) |
+| §11/§15 Meta-core suggestions (ưu tiên/loại trừ/hạ cap) | — (spec) | S2 banner "Agent học được pattern" → S4 khối "Đề xuất từ Operating Memory" | meta-core không bị chôn trong settings; S2 chỉ surface, S4 mới xác nhận/áp rule |
 
 - **Uncovered HIGH jobs:** không có.
 - **Orphan screens:** không có (S1 gate, S4 config — justified).
@@ -122,27 +125,27 @@ Solopreneur email-centric (buyer=user=admin), rành công nghệ (quen OAuth/ext
 
 ## MVP cut line
 
-- **v0 (ship the loop):** S1 (gate) · S2 (Surface + reply-confirm + bounced) · S3 (Draft+Approve + confirm-close + To:) · S4 (config tối thiểu).
+- **v0 (ship the loop):** S1 (gate) · S2 (Surface + agent work trace + reply-confirm + bounced + memory surface) · S3 (Draft+Approve + confirm-close + To:) · S4 (config tối thiểu + memory confirmation).
 - **Off-dashboard (v0):** digest noti → S2; NDR noti; reply-tracking nền.
 - **Deferred:** J6 re-engage · analytics · team · auto-send (hard defer) · Outlook.
 
 ## Flows (state-transition chains)
 
 - **Onboarding:** `S1.first-run → Nối Gmail → S1.loading (quét+học giọng) → S2.first-run`
-- **Core nudge (J1+J2+J3):** `noti sáng → S2 → mở thread → S3 → (Viết lại/Sửa) → Duyệt và gửi (To: bind) → S3.done → S2 (sent_pending_reply)`
+- **Core nudge (J1+J2+J3):** `noti sáng → S2 agent work trace → mở thread → S3 → (Viết lại/Sửa) → Duyệt và gửi (To: bind) → S3.done → S2 (sent_pending_reply)`
 - **Reply → xác nhận đóng (spec §4):** `Track nền phát hiện reply (conf cao) → S2 nhóm "Đã có reply" → S3.confirm-close → (Đóng) → closed → S2` · nhánh: `(Chưa phải reply) → monitoring`
 - **NDR (spec §5/§16):** `Track phát hiện bounce → noti + S2 row bounced → S3 alert → (user sửa địa chỉ) → monitoring | (Bỏ qua) → dismissed`
 - **Track nền:** `có reply conf thấp → giữ monitoring (gắn cờ)` · `quá cadence, chưa cap → awaiting_review` · `đạt cap → capped`
 - **Snooze:** `S2/S3 → Snooze → snoozed → (đến hạn) → monitoring/awaiting_review`
 - **Guardrail nhắc nhầm:** `S2 dismiss (1 lần)` hoặc `S4 → thêm exclude → excluded`
 - **Cần bạn trả lời (spec §4/§5 D12):** `Track nền phát hiện reply có ask mới, conf cao/mơ hồ → S2 nhóm "Cần bạn trả lời" → S3.needs-reply → (Mở trong Gmail) → thread rời queue tạm → Track quét thấy user đã tự trả lời → quay lại monitoring`
-- **Meta-core suggestion confirm (spec §11/§15):** `S4 khối "Đề xuất" → (Xác nhận) → áp vào ContactPreference/ExcludeRule/FollowUpPlaybook` · nhánh: `(Bỏ qua) → discard, giữ nguyên hệ thống`
+- **Meta-core suggestion confirm (spec §11/§15):** `S2 banner "Agent học được pattern" → Xem đề xuất → S4 khối "Đề xuất" → (Xác nhận) → áp vào ContactPreference/ExcludeRule/FollowUpPlaybook` · nhánh: `(Bỏ qua) → discard, giữ nguyên hệ thống`
 
 Mọi HIGH job trace qua ≥1 flow. Không dead-end.
 
 ## Navigation shape (light)
 
-Lần đầu: chỉ S1 (full-screen gate). Sau khi nối: **S2 là home** (master), phân **4 nhóm theo thứ tự** Mail bị trả lại → Cần bạn trả lời → Đã có reply → Cần follow-up (+ tag "Có thể bỏ qua" thu gọn bên trong nhóm cuối) — xem Agent-Domain-Spec §8 Điều phối. **S3** master-detail từ S2 (draft / confirm-close / needs-reply / bounced-alert view tùy state thread). **S4** drawer từ S2. Noti (digest/NDR) deep-link S2.
+Lần đầu: chỉ S1 (full-screen gate). Sau khi nối: **S2 là home** (master), tên hiển thị **"Việc cần xử lý"**, mở bằng agent work trace rồi phân **4 nhóm theo thứ tự** Mail bị trả lại → Cần bạn trả lời → Đã có reply → Cần follow-up (+ tag "Có thể bỏ qua" thu gọn bên trong nhóm cuối) — xem Agent-Domain-Spec §8 Điều phối. Khi có memory suggestion, S2 hiện banner nhẹ nhưng không áp rule tại chỗ. **S3** master-detail từ S2 (draft / confirm-close / needs-reply / bounced-alert view tùy state thread). **S4** drawer từ S2 để chỉnh cadence và xác nhận Operating Memory. Noti (digest/NDR) deep-link S2.
 
 ## Nav & headings spec (for external generator — pencil…)
 
@@ -154,7 +157,7 @@ Lần đầu: chỉ S1 (full-screen gate). Sau khi nối: **S2 là home** (maste
 | Screen | Page title | Section headings (h2) |
 |---|---|---|
 | S1 | Kết nối Gmail | Quyền truy cập · Cách dùng dữ liệu |
-| S2 | Cần follow-up | Mail bị trả lại · Cần bạn trả lời · Đã có reply · Cần follow-up (+ tag "Có thể bỏ qua" thu gọn bên trong) |
+| S2 | Việc cần xử lý | Mail bị trả lại · Cần bạn trả lời · Đã có reply · Cần follow-up (+ tag "Có thể bỏ qua" thu gọn bên trong) |
 | S3 | Soạn follow-up | Tóm tắt hội thoại · Bản nháp follow-up |
 | S4 | Cài đặt nhắc | Nhịp nhắc · Loại trừ · Dữ liệu |
 
@@ -165,4 +168,4 @@ Lần đầu: chỉ S1 (full-screen gate). Sau khi nối: **S2 là home** (maste
 - Token màu aging (đỏ ≥5d / cam 4d / vàng 3d) + status chip — chưa có trong DS, cần chốt (spec §19).
 - S1.loading (quét+học giọng) có thể lâu — progress/skeleton thế nào.
 - **ĐÃ CHỐT 2026-07-02** (trước là open question): S2 dùng đúng 4 section dọc theo thứ tự Mail bị trả lại → Cần bạn trả lời → Đã có reply → Cần follow-up; "Có thể bỏ qua" là tag/thu gọn BÊN TRONG "Cần follow-up", không phải section riêng. ASCII hiện tại ở `mockups.md` còn vẽ theo layout 3-section cũ — cần vẽ lại ở lượt `design-a-screen` kế tiếp.
-- S4: khối "Đề xuất từ Operating Memory" hiển thị thế nào khi CÓ đề xuất chờ — banner nổi trên cùng S4, hay list riêng dưới "Loại trừ"? Và có nên nổi một banner nhẹ ngay trên S2 (không phải chỉ trong S4) khi có đề xuất mới, để user không phải tự mở Cài đặt mới biết?
+- S4: khối "Đề xuất từ Operating Memory" hiển thị thế nào khi CÓ đề xuất chờ — banner nổi trên cùng S4, hay list riêng dưới "Loại trừ"? **Chốt hướng S2:** S2 có banner nhẹ để surface meta-core, nhưng chỉ deep-link sang S4; không áp rule tại S2.
