@@ -1,5 +1,5 @@
 import { COPY } from '../copy.js';
-import { RISK_OPTIONS, RISK_PROFILE, SAMPLE_THREADS } from '../fixtures.js';
+import { RISK_PROFILE, SAMPLE_THREADS } from '../fixtures.js';
 import { Button, Card, Pill } from './bits.jsx';
 
 function Stepper({ step }) {
@@ -15,22 +15,19 @@ function Stepper({ step }) {
   </div>;
 }
 
+function startScan(setState) {
+  setState(s => ({ ...s, oauthError: false, connected: true, onboardingStep: 'scan', loading: true, scanProgress: 18, scanLabel: 'Đã kết nối Gmail' }));
+  setTimeout(() => setState(s => ({ ...s, scanProgress: 45, scanLabel: 'Đang phân loại 30–90 ngày gần nhất' })), 260);
+  setTimeout(() => setState(s => ({ ...s, scanProgress: 68, scanLabel: 'Đang học giọng viết từ mail đã gửi' })), 560);
+  setTimeout(() => setState(s => ({ ...s, scanProgress: 82, scanLabel: 'Đang tìm pattern rủi ro: money / commitment / meeting / people' })), 820);
+  setTimeout(() => setState(s => ({ ...s, loading: false, scanned: true, scanProgress: 100, scanLabel: 'Đã dựng xong Risk Profile Draft', onboardingStep: 'profile', memorySuggestion: true, threads: SAMPLE_THREADS, selectedId: 'awaiting-proposal' })), 1150);
+}
+
 export default function Onboarding({ state, setState, openEvidence, goQueue }) {
   const step = state.onboardingStep;
 
-  function toggleRisk(id) {
-    setState(s => {
-      const has = s.selectedRisks.includes(id);
-      const next = has ? s.selectedRisks.filter(x => x !== id) : [...s.selectedRisks, id].slice(0, 3);
-      return { ...s, selectedRisks: next.length ? next : s.selectedRisks };
-    });
-  }
-
-  function connect() {
-    setState(s => ({ ...s, connected: true, onboardingStep: 'scan', loading: true, scanProgress: 16, scanLabel: 'OAuth đã cấp quyền · đang đọc metadata/thread cần thiết...' }));
-    setTimeout(() => setState(s => ({ ...s, scanProgress: 42, scanLabel: 'Đang quét sent/replies 30–90 ngày và nhận diện thread đang chờ...' })), 250);
-    setTimeout(() => setState(s => ({ ...s, scanProgress: 71, scanLabel: 'Đang học giọng/cadence từ hành vi duyệt-sửa-bỏ qua, không train model chung...' })), 560);
-    setTimeout(() => setState(s => ({ ...s, loading: false, scanned: true, scanProgress: 100, scanLabel: 'Đã dựng xong Risk Profile Draft', onboardingStep: 'profile', memorySuggestion: true, threads: SAMPLE_THREADS, selectedId: 'awaiting-proposal' })), 920);
+  function showError() {
+    setState(s => ({ ...s, oauthError: true, onboardingStep: 'connect', connected: false, loading: false }));
   }
 
   function confirmProfile() {
@@ -40,95 +37,72 @@ export default function Onboarding({ state, setState, openEvidence, goQueue }) {
 
   return <div className="onboarding">
     <Card className="onboarding-head">
-      <div className="between"><div><Pill tone="info">S1 · OAuth gate</Pill><h2>Trước khi agent làm gì, user phải thấy rõ nó đọc gì, gửi gì, lưu gì.</h2></div><Pill tone="ok">draft + approve</Pill></div>
+      <div className="between"><div><Pill tone="info">S1 · Kết nối & Consent</Pill><h2>Bật agent bằng cách nối Gmail và thấy rõ nó đụng/không đụng gì vào dữ liệu.</h2></div><Pill tone="ok">draft + approve · không tự gửi</Pill></div>
       <Stepper step={step} />
     </Card>
 
-    {step === 'connect' && <div className="s1-connect">
+    {step === 'connect' && !state.oauthError && <div className="s1-connect mockup-first">
       <Card className="s1-main">
-        <Pill tone="info">Kết nối inbox</Pill>
-        <h2>{COPY.onboarding.connectTitle}</h2>
+        <Pill tone="info">draft + approve · không tự gửi</Pill>
+        <h1 className="hero-title">Kết nối Gmail để agent tìm phần trách nhiệm còn lại trong inbox.</h1>
         <p>{COPY.onboarding.connectBody}</p>
-        <div className="connect-preview">
-          <div><b>Agent sẽ làm sau khi nối</b><span>OAuth → quét lịch sử & học giọng → dựng Risk Profile Draft → anh xác nhận → mới mở queue.</span></div>
-          <div><b>Không phải inbox reader thô</b><span>Mục tiêu là tìm phần trách nhiệm còn lại: mail nào có tiền, đang kẹt ở đâu, hôm nay cần xử gì.</span></div>
+        <div className="actions cta-row">
+          <Button variant="primary" onClick={() => startScan(setState)}>Kết nối Gmail</Button>
+          <Button onClick={showError}>Mô phỏng thiếu quyền</Button>
         </div>
-        <div className="actions"><Button variant="primary" onClick={connect}>{COPY.actions.connect}</Button><Button onClick={() => setState(s => ({ ...s, onboardingStep: 'intent' }))}>Chọn rủi ro trước</Button></div>
-        <p className="note">{COPY.trust.retention}</p>
+        <div className="note">Retention 90 ngày · purge khi disconnect · thu hồi quyền bất kỳ lúc nào.</div>
       </Card>
 
       <Card>
-        <h3>Quyền truy cập tối thiểu</h3>
-        <div className="scope"><b>✓</b><div><strong>Đọc thread Gmail</strong><span>Để phân loại awaiting / replied / bounced / safe wait.</span></div></div>
-        <div className="scope"><b>✓</b><div><strong>Tạo draft follow-up</strong><span>Chuẩn bị bản nháp đúng ngữ cảnh để anh duyệt.</span></div></div>
-        <div className="scope"><b>✓</b><div><strong>Gửi email đã duyệt</strong><span>Chỉ sau khi anh bấm Duyệt và gửi, bind đúng người nhận/thread.</span></div></div>
-        <div className="scope"><b>✕</b><div><strong>Không auto-send</strong><span>{COPY.trust.noAutoSend}</span></div></div>
+        <h3>Quyền truy cập</h3>
+        <div className="scopeList">
+          <div className="scopeItem"><b>✓</b><div><strong>Đọc thread</strong><span>Phân loại awaiting / replied / bounced / safe wait.</span></div></div>
+          <div className="scopeItem"><b>✓</b><div><strong>Soạn draft</strong><span>Tạo bản nháp follow-up để anh duyệt.</span></div></div>
+          <div className="scopeItem"><b>✕</b><div><strong>Không auto-send</strong><span>Gửi mail luôn cần anh bấm duyệt.</span></div></div>
+        </div>
       </Card>
 
       <Card className="s1-policy">
         <h3>Cách dùng dữ liệu</h3>
-        <p>Agent đọc email của anh để tìm thread cần follow-up và soạn draft đúng ngữ cảnh — đó là cách nó làm việc.</p>
-        <div className="scope"><b>✕</b><div><strong>Không train/fine-tune model dùng chung</strong><span>Email của anh không dùng để train bất kỳ model chung nào.</span></div></div>
-        <div className="scope"><b>✓</b><div><strong>Chỉ lưu operating memory riêng</strong><span>Giọng viết, cadence, loại thread hay bỏ qua, preference follow-up.</span></div></div>
-        <div className="scope"><b>✓</b><div><strong>Thu hồi & xoá được</strong><span>Disconnect Gmail thì purge dữ liệu; retention mặc định 90 ngày.</span></div></div>
-      </Card>
-    </div>}
-
-    {step === 'intent' && <div className="connect-grid">
-      <Card>
-        <Pill tone="info">Tùy chọn · 1 câu hỏi</Pill>
-        <h2>{COPY.onboarding.intentTitle}</h2>
-        <p>{COPY.onboarding.intentBody}</p>
-        <div className="risk-options">
-          {RISK_OPTIONS.map(opt => <button key={opt.id} className={`risk-option ${state.selectedRisks.includes(opt.id) ? 'selected' : ''}`} onClick={() => toggleRisk(opt.id)}>
-            <b>{opt.label}</b><span>{opt.hint}</span>
-          </button>)}
+        <div className="scopeList">
+          <div className="scopeItem"><b>✓</b><div><strong>Đọc email để làm nhiệm vụ</strong><span>Không giấu việc này: agent cần đọc thread để tìm phần trách nhiệm còn lại.</span></div></div>
+          <div className="scopeItem"><b>✕</b><div><strong>Không train/fine-tune model dùng chung</strong><span>Email của anh không dùng để train bất kỳ model chung nào.</span></div></div>
+          <div className="scopeItem"><b>✓</b><div><strong>Thu hồi & xoá theo yêu cầu</strong><span>Lưu tối đa 90 ngày · xóa khi ngắt kết nối.</span></div></div>
         </div>
-        <div className="actions"><Button variant="primary" onClick={connect}>{COPY.actions.connect}</Button><Button onClick={() => setState(s => ({ ...s, onboardingStep: 'connect' }))}>Quay lại màn kết nối</Button></div>
-      </Card>
-      <Card>
-        <h3>Vì sao chỉ hỏi ít?</h3>
-        <div className="scope"><b>✓</b><div><strong>Giữ agent magic</strong><span>Không bắt user khai form dài.</span></div></div>
-        <div className="scope"><b>✓</b><div><strong>Email calibration</strong><span>Pattern thật đến từ lịch sử 30–90 ngày.</span></div></div>
-        <div className="scope"><b>✓</b><div><strong>Confirm sau scan</strong><span>User sửa Risk Profile Draft thay vì tự cấu hình từ đầu.</span></div></div>
       </Card>
     </div>}
 
-    {step === 'scan' && <div className="connect-grid">
-      <Card className="hero">
-        <Pill tone="info">S1.loading</Pill>
-        <h2>{COPY.onboarding.scanTitle}</h2>
-        <p>{COPY.onboarding.scanBody}</p>
-        <div className="progress"><i style={{ width: `${state.scanProgress}%` }} /></div>
-        <p className="note">{state.scanLabel}</p>
-      </Card>
-      <Card>
-        <h3>Agent đang tìm gì?</h3>
-        {['Thread đang chờ đối tác vs đang chờ anh', 'Mail bị trả lại / NDR', 'Draft follow-up cần duyệt', 'Pattern giọng viết và cadence riêng'].map(x => <div className="trace" key={x}>✓ {x}</div>)}
-      </Card>
-    </div>}
+    {step === 'connect' && state.oauthError && <div className="modalbox in-flow"><div className="mh">Không đủ quyền Gmail <span>⚠️</span></div><div className="mb"><p>Agent chưa thể đọc thread để phân loại trách nhiệm hôm nay.</p><div className="locked">Cần quyền đọc thread và tạo draft. Không yêu cầu quyền auto-send.</div></div><div className="mf"><Button onClick={() => setState(s => ({ ...s, oauthError: false }))}>Để sau</Button><Button variant="primary" onClick={() => startScan(setState)}>Thử lại</Button></div></div>}
+
+    {step === 'scan' && <Card className="scan-card">
+      <h2>{COPY.onboarding.scanTitle}</h2>
+      <div className="progress"><i style={{ width: `${state.scanProgress}%` }} /></div>
+      <div className="step-row"><span className="mk">✓</span><span className="lb">Đã kết nối Gmail</span><Pill tone="ok">xong</Pill></div>
+      <div className="step-row"><span className="mk">◌</span><span className="lb">Đang phân loại 30–90 ngày gần nhất</span><Pill tone="info">đang chạy</Pill></div>
+      <div className="step-row"><span className="mk">◌</span><span className="lb">Đang tìm pattern rủi ro: money / commitment / meeting / people</span><Pill tone="warn">B mặc định</Pill></div>
+      <div className="locked">Bằng chứng mặc định sẽ là pattern + subject được mask nhẹ (mức B). Full thread (mức C) chỉ mở khi anh bấm xem sâu.</div>
+      <p className="note">{state.scanLabel}</p>
+    </Card>}
 
     {step === 'profile' && <div className="profile-grid">
       <Card>
-        <div className="between"><div><Pill tone="info">Risk Profile Draft</Pill><h2>{COPY.onboarding.profileTitle}</h2></div><Button onClick={openEvidence}>{COPY.actions.deepEvidence}</Button></div>
-        <p>{COPY.onboarding.profileBody}</p>
-        <div className="profile-list">
-          {RISK_PROFILE.map(r => <div className={`profile-item ${r.tone}`} key={r.id}>
-            <div className="rank">{r.rank}</div>
-            <div><div className="between"><h3>{r.title}</h3><Pill tone={r.tone}>priority {r.rank}</Pill></div><p>{r.summary}</p><ul>{r.evidence.slice(0,2).map(e => <li key={e}>{e}</li>)}</ul></div>
-          </div>)}
+        <div className="between"><div><Pill tone="info">Risk Profile Draft · B mặc định</Pill><h2>Em sẽ ưu tiên inbox theo risk profile này</h2></div><Button onClick={openEvidence}>Xem bằng chứng sâu</Button></div>
+        <div className="riskGrid">
+          {RISK_PROFILE.map(r => <div className="riskBox" key={r.id}><b>{r.rank}. {r.title}</b><span>{r.summary}</span></div>)}
         </div>
-        <div className="actions"><Button variant="primary" onClick={confirmProfile}>{COPY.actions.confirmProfile}</Button><Button>{COPY.actions.adjustProfile}</Button><Button>{COPY.actions.ignoreType}</Button></div>
-        <p className="note">{COPY.trust.evidenceB}</p>
+        <div className="evidence"><b>Bằng chứng mặc định (mức B) — pattern + subject mask nhẹ</b><div className="mask">12 thread có pattern báo giá/payment · ví dụ: “Re: Proposal for *** project”, “Payment confirmation — *** invoice”</div><div className="mask">7 thread có commitment phrase · ví dụ: “I'll send by Friday — *** deck”, “Follow up on promised ***”</div></div>
+        <h3>Đề xuất từ Operating Memory</h3>
+        <div className="suggestion-grid">
+          <div className="riskBox"><b>Ưu tiên ACME</b><span>Nâng priority_tier cho domain ACME.</span><div className="actions"><Button>Xác nhận</Button><Button>Bỏ qua</Button></div></div>
+          <div className="riskBox"><b>Loại trừ digest@***</b><span>Hay bị dismiss → gợi ý ExcludeRule.</span><div className="actions"><Button>Xác nhận</Button><Button>Bỏ qua</Button></div></div>
+          <div className="riskBox"><b>Hạ cap thread FYI</b><span>Hay soft-close → giảm số lần nhắc.</span><div className="actions"><Button>Xác nhận</Button><Button>Bỏ qua</Button></div></div>
+        </div>
+        <div className="actions"><Button variant="primary" onClick={confirmProfile}>Xác nhận profile</Button><Button>Sửa ưu tiên</Button><Button>Bỏ qua đề xuất</Button></div>
       </Card>
       <Card>
         <h3>Queue preview sau khi xác nhận</h3>
         <p>Agent sẽ không đưa raw inbox cho anh. Nó chỉ đưa các việc còn trách nhiệm người quyết định.</p>
-        <div className="trace">✓ 80 email đã xử lý</div>
-        <div className="trace">✓ 5 quyết định cần anh</div>
-        <div className="trace">✓ 1 bounced mail đang chặn pipeline</div>
-        <div className="trace">✓ 1 draft follow-up sẵn để duyệt</div>
-        <p className="note">{COPY.onboarding.queueReady}</p>
+        <div className="trace">✓ 80 email đã xử lý</div><div className="trace">✓ 5 quyết định cần anh</div><div className="trace">✓ 1 bounced mail đang chặn pipeline</div><div className="trace">✓ 1 draft follow-up sẵn để duyệt</div>
       </Card>
     </div>}
   </div>;
