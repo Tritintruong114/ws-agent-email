@@ -25,6 +25,142 @@ Instead of showing a raw inbox, the agent turns email into a short list of decis
 
 Important guardrail: **draft + approve, not auto-send**.
 
+
+## System maps
+
+### Agent Flow → User Flow
+
+```mermaid
+flowchart LR
+  subgraph A[Agent Flow]
+    A1[Connect Gmail with minimal scopes]
+    A2[Scan recent threads]
+    A3[Classify thread state]
+    A4[Score risk and priority]
+    A5[Decide next action]
+    A6[Surface responsibility queue]
+    A7[Generate draft or recommendation]
+    A8[Track outcome and update Operating Memory]
+  end
+
+  subgraph U[User Flow]
+    U1[Review consent and data policy]
+    U2[Confirm Risk Profile Draft]
+    U3[Open Việc cần xử lý]
+    U4[Inspect why/evidence when needed]
+    U5[Approve draft, reply manually, snooze, ignore, or close]
+    U6[Correct the agent when it is wrong]
+    U7[Tune cadence, excludes, and memory suggestions]
+  end
+
+  A1 --> U1
+  U1 --> A2
+  A2 --> A3 --> A4 --> A5 --> A6
+  A6 --> U3
+  U3 --> U4
+  U3 --> U5
+  A5 --> A7
+  A7 --> U5
+  U5 --> A8
+  U6 --> A8
+  A8 --> U7
+  U7 --> A3
+```
+
+### Core Loop
+
+The product is not an inbox UI. The core loop is: **detect responsibility → reduce to decisions → get human approval → track outcome → learn safer operating rules**.
+
+```mermaid
+flowchart TD
+  L1[Detect<br/>Read new/recent email threads] --> L2[Understand<br/>Who is waiting on whom?]
+  L2 --> L3[Prioritize<br/>Money, reputation, commitment, meeting, delivery risk]
+  L3 --> L4[Dispatch<br/>Queue only what needs human attention]
+  L4 --> L5{Human decision}
+  L5 -->|Approve draft| L6[Send approved follow-up]
+  L5 -->|Reply manually| L7[Open Gmail / mark awaiting user]
+  L5 -->|Snooze| L8[Track until due date]
+  L5 -->|Ignore / close| L9[Close or deprioritize]
+  L6 --> L10[Track reply]
+  L7 --> L10
+  L8 --> L10
+  L9 --> L10
+  L10 --> L11[Outcome feedback<br/>won/lost/replied/no response/correction]
+  L11 --> L12[Operating Memory<br/>rules, cadence, examples, preferences]
+  L12 --> L1
+```
+
+### Core vs Meta Layers
+
+The core is the thing the user hires the agent to do. Meta layers are the control systems that make the agent trustworthy, useful, and company-owned over time.
+
+```mermaid
+flowchart TB
+  Core[Core<br/>Email Revenue Follow-through<br/>Find money/responsibility stuck in email and move it forward]
+
+  subgraph Domain[Domain Layers]
+    D1[Lead / Opportunity<br/>quotes, proposals, payments, orders]
+    D2[Sales Conversation<br/>asks, objections, commitments, next steps]
+    D3[Follow-through<br/>cadence, due dates, waiting_on, aging]
+    D4[Trust & Approval<br/>draft + approve, no auto-send]
+  end
+
+  subgraph Meta[Meta Layers]
+    M1[Risk Profile<br/>what matters most to this user/company]
+    M2[Operating Memory<br/>approved examples, customer memory, playbook rules]
+    M3[Evidence Policy<br/>Level B default, Level C on click]
+    M4[Governance<br/>scopes, retention, purge, excludes, audit]
+    M5[Training Loop<br/>corrections and outcomes improve rules, not shared model fine-tune]
+  end
+
+  Core --> D1
+  Core --> D2
+  Core --> D3
+  Core --> D4
+
+  M1 --> Core
+  M2 --> Core
+  M3 --> D4
+  M4 --> D4
+  M5 --> M2
+  D1 --> M5
+  D2 --> M5
+  D3 --> M5
+```
+
+### How Core and Meta work together
+
+```mermaid
+sequenceDiagram
+  participant Gmail
+  participant Agent
+  participant Memory as Operating Memory
+  participant User
+
+  Gmail->>Agent: New/recent threads
+  Agent->>Memory: Load risk profile, cadence, excludes, approved examples
+  Agent->>Agent: Classify waiting_on, value_type, confidence, next_action_hint
+  Agent->>User: Show responsibility queue, not raw inbox
+  User->>Agent: Open why/evidence or thread detail
+  Agent->>User: Show Level B evidence by default
+  User->>Agent: Approve draft / reply manually / snooze / close / correct
+  Agent->>Gmail: Send only if user approved
+  Agent->>Memory: Store correction/outcome as rule, example, or preference
+  Memory->>Agent: Improve future prioritization and drafts
+```
+
+## Product model in one line
+
+```mermaid
+flowchart LR
+  Email[Raw email threads] --> Agent[Agent decision system]
+  Agent --> Queue[Responsibility queue]
+  Queue --> Human[Human approval / correction]
+  Human --> Outcome[Tracked outcome]
+  Outcome --> Memory[Company-owned Operating Memory]
+  Memory --> Agent
+```
+
 ## Source of truth order
 
 When changing UX/content, follow this order:
