@@ -12,7 +12,7 @@ export const COPY = {
     draft: 'Soạn follow-up',
     settings: 'Cài đặt nhắc'
   },
-  demo: { label: 'Demo flow', empty: 'Từ đầu', sample: 'Risk Draft' },
+  demo: { label: 'Demo flow', empty: 'S1 Connect', sample: 'Risk Draft' },
   actions: {
     connect: 'Kết nối Gmail', scan: 'Quét 30–90 ngày', why: 'Vì sao nổi?', open: 'Mở thread', snooze: 'Hẹn lại', approveSend: 'Duyệt và gửi', rewrite: 'Viết lại', close: 'Đóng thread', notClosed: 'Chưa đóng', fixAddress: 'Sửa & gửi lại', save: 'Lưu cài đặt', deepEvidence: 'Xem bằng chứng sâu', continue: 'Tiếp tục', confirmProfile: 'Đúng rồi, bắt đầu theo dõi', adjustProfile: 'Sửa ưu tiên', ignoreType: 'Đừng nhắc loại này'
   },
@@ -25,8 +25,8 @@ export const COPY = {
   onboarding: {
     intentTitle: 'Điều gì trong email làm anh mất tiền nhất nếu bỏ sót?',
     intentBody: 'Chọn 1–3 rủi ro chính. Phần còn lại agent sẽ tự suy ra sau khi đọc lịch sử email gần đây.',
-    connectTitle: 'Cho agent đọc Gmail đủ để dựng Risk Profile Draft.',
-    connectBody: 'Agent cần đọc thread và tạo draft. Nó không tự gửi mail, không đổi dữ liệu ngoài Gmail, và không dùng email để train model dùng chung.',
+    connectTitle: 'Kết nối Gmail',
+    connectBody: 'Kết nối inbox để agent bắt đầu tìm thread đang chờ trả lời, quét lịch sử gần đây và dựng Risk Profile Draft.',
     scanTitle: 'Đang quét 30–90 ngày gần nhất',
     scanBody: 'Agent đang tìm pattern doanh thu, lời hứa, meeting gần, bounced mail, và khách quan trọng — không chỉ đếm unread.',
     profileTitle: 'Risk Profile Draft',

@@ -64,7 +64,7 @@ export const SAMPLE_THREADS = [
 ];
 
 export const EMPTY_STATE = {
-  onboardingStep: 'intent',
+  onboardingStep: 'connect',
   selectedRisks: ['quote'],
   connected: false,
   scanned: false,

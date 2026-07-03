@@ -4,12 +4,12 @@ import { Button, Card, Pill } from './bits.jsx';
 
 function Stepper({ step }) {
   const steps = [
-    ['intent', '1 câu hỏi'],
-    ['connect', 'Kết nối'],
-    ['scan', 'Scan'],
+    ['connect', 'Kết nối Gmail'],
+    ['scan', 'Quét + học giọng'],
     ['profile', 'Risk Draft'],
+    ['done', 'Queue'],
   ];
-  const activeIndex = steps.findIndex(([id]) => id === step);
+  const activeIndex = Math.max(0, steps.findIndex(([id]) => id === step));
   return <div className="stepper">
     {steps.map(([id, label], i) => <div key={id} className={`step ${i <= activeIndex ? 'active' : ''}`}><i>{i + 1}</i><span>{label}</span></div>)}
   </div>;
@@ -27,10 +27,10 @@ export default function Onboarding({ state, setState, openEvidence, goQueue }) {
   }
 
   function connect() {
-    setState(s => ({ ...s, connected: true, onboardingStep: 'scan', loading: true, scanProgress: 16, scanLabel: 'Đang xin quyền đọc thread...' }));
-    setTimeout(() => setState(s => ({ ...s, scanProgress: 42, scanLabel: 'Đang nhận diện money / quote / payment...' })), 250);
-    setTimeout(() => setState(s => ({ ...s, scanProgress: 71, scanLabel: 'Đang tìm commitment, meeting, bounced mail...' })), 520);
-    setTimeout(() => setState(s => ({ ...s, loading: false, scanned: true, scanProgress: 100, scanLabel: 'Đã quét 90 ngày gần nhất', onboardingStep: 'profile', memorySuggestion: true, threads: SAMPLE_THREADS, selectedId: 'awaiting-proposal' })), 850);
+    setState(s => ({ ...s, connected: true, onboardingStep: 'scan', loading: true, scanProgress: 16, scanLabel: 'OAuth đã cấp quyền · đang đọc metadata/thread cần thiết...' }));
+    setTimeout(() => setState(s => ({ ...s, scanProgress: 42, scanLabel: 'Đang quét sent/replies 30–90 ngày và nhận diện thread đang chờ...' })), 250);
+    setTimeout(() => setState(s => ({ ...s, scanProgress: 71, scanLabel: 'Đang học giọng/cadence từ hành vi duyệt-sửa-bỏ qua, không train model chung...' })), 560);
+    setTimeout(() => setState(s => ({ ...s, loading: false, scanned: true, scanProgress: 100, scanLabel: 'Đã dựng xong Risk Profile Draft', onboardingStep: 'profile', memorySuggestion: true, threads: SAMPLE_THREADS, selectedId: 'awaiting-proposal' })), 920);
   }
 
   function confirmProfile() {
@@ -40,13 +40,43 @@ export default function Onboarding({ state, setState, openEvidence, goQueue }) {
 
   return <div className="onboarding">
     <Card className="onboarding-head">
-      <div className="between"><div><Pill tone="info">Onboarding intelligence</Pill><h2>Không setup dài. Agent hỏi ít, đọc lịch sử, rồi đưa Risk Profile Draft để anh sửa.</h2></div><Pill tone="ok">1–3 câu max</Pill></div>
-      <Stepper step={step === 'done' ? 'profile' : step} />
+      <div className="between"><div><Pill tone="info">S1 · OAuth gate</Pill><h2>Trước khi agent làm gì, user phải thấy rõ nó đọc gì, gửi gì, lưu gì.</h2></div><Pill tone="ok">draft + approve</Pill></div>
+      <Stepper step={step} />
     </Card>
+
+    {step === 'connect' && <div className="s1-connect">
+      <Card className="s1-main">
+        <Pill tone="info">Kết nối inbox</Pill>
+        <h2>{COPY.onboarding.connectTitle}</h2>
+        <p>{COPY.onboarding.connectBody}</p>
+        <div className="connect-preview">
+          <div><b>Agent sẽ làm sau khi nối</b><span>OAuth → quét lịch sử & học giọng → dựng Risk Profile Draft → anh xác nhận → mới mở queue.</span></div>
+          <div><b>Không phải inbox reader thô</b><span>Mục tiêu là tìm phần trách nhiệm còn lại: mail nào có tiền, đang kẹt ở đâu, hôm nay cần xử gì.</span></div>
+        </div>
+        <div className="actions"><Button variant="primary" onClick={connect}>{COPY.actions.connect}</Button><Button onClick={() => setState(s => ({ ...s, onboardingStep: 'intent' }))}>Chọn rủi ro trước</Button></div>
+        <p className="note">{COPY.trust.retention}</p>
+      </Card>
+
+      <Card>
+        <h3>Quyền truy cập tối thiểu</h3>
+        <div className="scope"><b>✓</b><div><strong>Đọc thread Gmail</strong><span>Để phân loại awaiting / replied / bounced / safe wait.</span></div></div>
+        <div className="scope"><b>✓</b><div><strong>Tạo draft follow-up</strong><span>Chuẩn bị bản nháp đúng ngữ cảnh để anh duyệt.</span></div></div>
+        <div className="scope"><b>✓</b><div><strong>Gửi email đã duyệt</strong><span>Chỉ sau khi anh bấm Duyệt và gửi, bind đúng người nhận/thread.</span></div></div>
+        <div className="scope"><b>✕</b><div><strong>Không auto-send</strong><span>{COPY.trust.noAutoSend}</span></div></div>
+      </Card>
+
+      <Card className="s1-policy">
+        <h3>Cách dùng dữ liệu</h3>
+        <p>Agent đọc email của anh để tìm thread cần follow-up và soạn draft đúng ngữ cảnh — đó là cách nó làm việc.</p>
+        <div className="scope"><b>✕</b><div><strong>Không train/fine-tune model dùng chung</strong><span>Email của anh không dùng để train bất kỳ model chung nào.</span></div></div>
+        <div className="scope"><b>✓</b><div><strong>Chỉ lưu operating memory riêng</strong><span>Giọng viết, cadence, loại thread hay bỏ qua, preference follow-up.</span></div></div>
+        <div className="scope"><b>✓</b><div><strong>Thu hồi & xoá được</strong><span>Disconnect Gmail thì purge dữ liệu; retention mặc định 90 ngày.</span></div></div>
+      </Card>
+    </div>}
 
     {step === 'intent' && <div className="connect-grid">
       <Card>
-        <Pill tone="info">Câu hỏi duy nhất</Pill>
+        <Pill tone="info">Tùy chọn · 1 câu hỏi</Pill>
         <h2>{COPY.onboarding.intentTitle}</h2>
         <p>{COPY.onboarding.intentBody}</p>
         <div className="risk-options">
@@ -54,7 +84,7 @@ export default function Onboarding({ state, setState, openEvidence, goQueue }) {
             <b>{opt.label}</b><span>{opt.hint}</span>
           </button>)}
         </div>
-        <div className="actions"><Button variant="primary" onClick={() => setState(s => ({ ...s, onboardingStep: 'connect' }))}>{COPY.actions.continue}</Button></div>
+        <div className="actions"><Button variant="primary" onClick={connect}>{COPY.actions.connect}</Button><Button onClick={() => setState(s => ({ ...s, onboardingStep: 'connect' }))}>Quay lại màn kết nối</Button></div>
       </Card>
       <Card>
         <h3>Vì sao chỉ hỏi ít?</h3>
@@ -64,26 +94,9 @@ export default function Onboarding({ state, setState, openEvidence, goQueue }) {
       </Card>
     </div>}
 
-    {step === 'connect' && <div className="connect-grid">
-      <Card className="hero">
-        <Pill tone="ok">draft + approve · không tự gửi</Pill>
-        <h2>{COPY.onboarding.connectTitle}</h2>
-        <p>{COPY.onboarding.connectBody}</p>
-        <div className="actions"><Button variant="primary" onClick={connect}>{COPY.actions.connect}</Button><Button onClick={() => setState(s => ({ ...s, onboardingStep: 'intent' }))}>Đổi rủi ro</Button></div>
-        <p className="note">{COPY.trust.retention}</p>
-      </Card>
-      <Card>
-        <h3>Quyền truy cập</h3>
-        <div className="scope"><b>✓</b><div><strong>Đọc thread</strong><span>Phân loại awaiting / replied / bounced / safe wait.</span></div></div>
-        <div className="scope"><b>✓</b><div><strong>Tạo draft</strong><span>Chuẩn bị follow-up để anh duyệt.</span></div></div>
-        <div className="scope"><b>✕</b><div><strong>Không auto-send</strong><span>{COPY.trust.noAutoSend}</span></div></div>
-        <div className="scope"><b>✕</b><div><strong>Không shared training</strong><span>{COPY.trust.noSharedTraining}</span></div></div>
-      </Card>
-    </div>}
-
     {step === 'scan' && <div className="connect-grid">
       <Card className="hero">
-        <Pill tone="info">Scanning 30–90 days</Pill>
+        <Pill tone="info">S1.loading</Pill>
         <h2>{COPY.onboarding.scanTitle}</h2>
         <p>{COPY.onboarding.scanBody}</p>
         <div className="progress"><i style={{ width: `${state.scanProgress}%` }} /></div>
@@ -91,7 +104,7 @@ export default function Onboarding({ state, setState, openEvidence, goQueue }) {
       </Card>
       <Card>
         <h3>Agent đang tìm gì?</h3>
-        {['Email nào có tiền trong đó', 'Tiền đang kẹt ở bước nào', 'Hôm nay cần làm gì để tiền chạy tiếp', 'Khi nào không nên hành động'].map(x => <div className="trace" key={x}>✓ {x}</div>)}
+        {['Thread đang chờ đối tác vs đang chờ anh', 'Mail bị trả lại / NDR', 'Draft follow-up cần duyệt', 'Pattern giọng viết và cadence riêng'].map(x => <div className="trace" key={x}>✓ {x}</div>)}
       </Card>
     </div>}
 

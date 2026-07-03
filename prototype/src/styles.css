@@ -335,3 +335,11 @@ textarea { min-height: 170px; resize: vertical; line-height: 1.55; }
 .profile-item.info .rank { color: var(--cw-teal); background: rgba(90,147,201,.14); }
 .profile-item.ok .rank { color: var(--cw-green); background: var(--cw-green-soft); }
 @media (max-width: 880px) { .stepper, .risk-options, .profile-grid { grid-template-columns: 1fr; } }
+
+.s1-connect { display: grid; grid-template-columns: minmax(0,1.08fr) .92fr; gap: var(--cw-sp-4); align-items: start; }
+.s1-main { grid-row: span 2; min-height: 420px; display: flex; flex-direction: column; justify-content: center; }
+.connect-preview { display: grid; gap: var(--cw-sp-2); margin: var(--cw-sp-4) 0 var(--cw-sp-2); }
+.connect-preview > div { border: var(--cw-hairline) solid var(--cw-border); background: var(--cw-card-2); border-radius: var(--cw-r-md); padding: 12px 13px; }
+.connect-preview span { display: block; margin-top: 4px; color: var(--cw-ink-2); font-size: var(--cw-fs-sm); line-height: 1.5; }
+.s1-policy p { margin-bottom: var(--cw-sp-3); }
+@media (max-width: 880px) { .s1-connect { grid-template-columns: 1fr; } .s1-main { min-height: auto; } }
