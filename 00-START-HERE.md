@@ -4,7 +4,7 @@
 
 ## Verdict
 
-**Narrow** · Confidence: **Medium–High** · Cập nhật lần cuối `2026-07-03` bởi `workspace-integrity-pass` (khôi phục `screens-brief.md`; đánh dấu HTML prototype là bước kế tiếp vì `mockups.html` + `mockups.data.js` chưa có trong repo — verdict không đổi)
+**Narrow** · Confidence: **Medium–High** · Cập nhật lần cuối `2026-07-03` bởi `brief-to-html` (đã render HTML prototype từ `screens-brief.md` + `design-system-tokens.css` — verdict không đổi)
 
 ## Tóm tắt (5–10 dòng)
 
@@ -21,7 +21,7 @@ Agent-fit mạnh (6/6 trục Yes) và pain/khe đều thật, nên không Pivot/
 | Vai trò | Đọc gì | Để làm gì |
 |---|---|---|
 | **Product / người quyết định** | `01-PRODUCT-MAP.md` | pain → user → workflow → agent job → giá trị → moat, core loop, và scope V0 — trong một trang |
-| **Builder / agent engineer** | `Agent-Domain-Spec.md` → `screens-brief.md` → `appendix/mockups.md` | nghiệp vụ agent-hoá trên OpenClaw → bộ màn đã biện minh → ASCII coverage-check. HTML prototype là bước kế tiếp, chưa có file trong repo. |
+| **Builder / agent engineer** | `Agent-Domain-Spec.md` → `screens-brief.md` → `mockups.html` + `mockups.data.js` | nghiệp vụ agent-hoá trên OpenClaw → bộ màn đã biện minh → HTML prototype tương tác để eye-review. |
 | **Cần verify một claim / xem bằng chứng thô** | `appendix/` | dossier, 4 doc research, ASCII coverage gate — bằng chứng phụ trợ, KHÔNG phải quyết định |
 
 ## Trạng thái pipeline (cập nhật mỗi stage)
@@ -30,9 +30,9 @@ Agent-fit mạnh (6/6 trục Yes) và pain/khe đều thật, nên không Pivot/
 - [x] `agent-domain-spec` — `Agent-Domain-Spec.md` + `01-PRODUCT-MAP.md` xong
 - [x] `grill-to-brief` — `screens-brief.md` xong
 - [x] `design-a-screen` — ASCII coverage-check có sẵn (`appendix/mockups.md`), nhưng file này tự ghi rõ layout 3-section cũ chưa vẽ lại — xem TODO trong file.
-- [ ] `brief-to-html` — CHƯA có `mockups.html` + `mockups.data.js` trong repo; cần render lại từ `screens-brief.md` + `design-system-tokens.css`.
+- [x] `brief-to-html` — `mockups.html` + `mockups.data.js` đã render từ `screens-brief.md` + `design-system-tokens.css`; phủ đủ 4 màn × mọi state (S1×3, S2×7, S3×8, S4×5), `node --check` pass.
 
-> Mục nào chưa tick = file tương ứng CHƯA tồn tại trong workspace này. Đừng suy diễn nội dung của nó.
+> Mục nào chưa tick = file tương ứng CHƯA tồn tại trong workspace này. Hiện HTML prototype là cặp file inseparable: mở/ship `mockups.html` cùng `mockups.data.js`.
 
 ## Scope
 
@@ -40,14 +40,17 @@ Agent-fit mạnh (6/6 trục Yes) và pain/khe đều thật, nên không Pivot/
 - ✗ KHÔNG backend, KHÔNG FE↔BE contract — mọi artifact ở đây là wireframe/spec design-time, không phải code production (Phase-2, ngoài plugin này).
 - ✗ WTP / urgency / switching là **giả thuyết chưa verify** (xem Decision Gate, `appendix/dossier.md` §8) — không phải dữ kiện.
 - ✗ Auto-send, tích hợp Zalo/FB/Outlook, sequence/bulk outreach, phân khúc VN bán-online-nội-địa — ngoài v0 (chi tiết `01-PRODUCT-MAP.md`).
-- ✗ Chưa có HTML prototype trong repo (`mockups.html` + `mockups.data.js`) và chưa có Prototype tương tác đầy đủ (`new-design/`, run `/to-prototype`). Bucket-order 4-section (Mail bị trả lại → Cần bạn trả lời → Đã có reply → Cần follow-up) khoá trong `screens-brief.md`; ASCII hiện tại còn cần redraw.
+- ✓ Đã có HTML prototype trong repo (`mockups.html` + `mockups.data.js`) theo bucket-order 4-section: Mail bị trả lại → Cần bạn trả lời → Đã có reply → Cần follow-up. Cặp file này là wireframe static, chưa phải FE production/BE contract.
+- ✗ Chưa có Prototype tương tác đầy đủ Phase-2 (`new-design/`, run `/to-prototype`). ASCII hiện tại còn cần redraw nếu muốn dùng lại như coverage artifact.
 
 ## Bước kế — chọn theo người nhận
 
-- **Product/stakeholder review:** đọc `01-PRODUCT-MAP.md` rồi `screens-brief.md`; chưa có HTML prototype để double-click.
-- **Render review artifact:** chạy lại stage `brief-to-html` để tạo cặp `mockups.html` + `mockups.data.js` từ `screens-brief.md` và `design-system-tokens.css`.
+- **Product/stakeholder review:** mở `mockups.html` cạnh `mockups.data.js` để eye-review; sau đó đọc `01-PRODUCT-MAP.md` và `screens-brief.md` nếu cần trace ngược spec.
+- **Interactive-prototype upload:** upload/ship cả cặp `mockups.html` + `mockups.data.js`; `.html` một mình sẽ render blank.
 - **Phase-2 FE build (use-case-renderers):** dùng `Agent-Domain-Spec.md` + `screens-brief.md` làm nguồn thật. `appendix/mockups.md` chỉ là coverage-check và còn TODO redraw, không port layout cũ vào Renderer.
 
 ## Design system đã dùng
 
-`design-system-tokens.css` có sẵn trong repo (88 token, light+dark, `--cw-*`) để dùng cho bước render HTML tiếp theo. Khi render `mockups.html`, cần map token này vào engine và bổ sung các primitive còn thiếu cho aging/status/disabled reason như ghi trong `appendix/mockups.md`.
+`design-system-tokens.css` (88 token, light+dark, `--cw-*`) đã được map vào token block của `mockups.html`. Components/layout dùng engine từ `/home/node/usecase-factory/skills/brief-to-html/assets/template.html`; nội dung screen nằm trong `mockups.data.js`.
+
+**Quy tắc sản phẩm — Risk Profile Draft:** mặc định hiện **mức B** (pattern + subject mask nhẹ) ở S4 state "Risk Profile · B" và trong S1 loading; **mức C** (full evidence drill-down) CHỈ hiện ở state riêng `deepEvidence` khi user bấm "Xem bằng chứng sâu" — không show mặc định.
