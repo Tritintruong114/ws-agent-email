@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mockups — ws-email-agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --cw-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --cw-canvas: #fff9f9; --cw-frame: #fff9f9; --cw-bg: #fff;
+  --cw-card: #fff; --cw-card-2: #f5eef0; --cw-border: rgba(40,20,24,0.07);
+  --cw-border-strong: rgba(40,20,24,0.13); --cw-ink: #1c1a1b; --cw-ink-2: #6b6469;
+  --cw-ink-3: #a59ca1; --cw-accent: #1c1c1e; --cw-accent-h: #3a3a40;
+  --cw-accent-soft: rgba(28,28,30,0.06); --cw-green: #3f9b63;
+  --cw-green-soft: rgba(63,155,99,0.13); --cw-teal: #5a93c9;
+  --cw-fs-h1: 34px; --cw-fs-h2: 18px; --cw-fs-title: 16px; --cw-fs-body: 14px;
+  --cw-fs-sm: 13px; --cw-fs-meta: 12.5px; --cw-fs-label: 11.5px; --cw-fs-micro: 11px;
+  --cw-sp-1: 4px; --cw-sp-2: 8px; --cw-sp-3: 12px; --cw-sp-4: 16px; --cw-sp-5: 20px;
+  --cw-sp-6: 24px; --cw-h-chip: 34px; --cw-h-btn: 38px;
+  --cw-r-sm: 9px; --cw-r-md: 12px; --cw-r-lg: 16px; --cw-r-round: 999px;
+  --cw-shadow: 0 8px 30px 0 rgba(0,0,0,0.08); --cw-shadow-sm: 0 4px 20px 0 rgba(0,0,0,0.05);
+  --cw-ease: cubic-bezier(.22,1,.36,1); --cw-dur: .18s;
+}
+[data-theme=dark] {
+  --cw-canvas: #15100f; --cw-frame: #1a1413; --cw-bg: #211a19;
+  --cw-card: #241d1c; --cw-card-2: #2e2624; --cw-border: rgba(255,240,238,0.08);
+  --cw-border-strong: rgba(255,240,238,0.15); --cw-ink: #f5ece9;
+  --cw-ink-2: #b3a8a5; --cw-ink-3: #7a6f6c; --cw-accent: #f0564d;
+  --cw-accent-soft: rgba(240,86,77,0.16); --cw-green: #4faf76;
+  --cw-green-soft: rgba(79,175,118,0.16);
+  --cw-shadow: 0 8px 30px 0 rgba(0,0,0,0.45); --cw-shadow-sm: 0 4px 20px 0 rgba(0,0,0,0.28);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--cw-sans); background: var(--cw-canvas); color: var(--cw-ink); font-size: 14px; line-height: 1.5; }
+.topnav { display: flex; align-items: center; gap: var(--cw-sp-1); padding: 0 var(--cw-sp-5); height: 48px;
+background: var(--cw-bg); border-bottom: 1px solid var(--cw-border); position: sticky; top: 0; z-index: 100; }
+.topnav-logo { font-weight: 650; font-size: var(--cw-fs-title); margin-right: auto; color: var(--cw-ink); }
+.topnav-logo span { color: var(--cw-ink-2); font-weight: 400; }
+.nav-link { padding: var(--cw-sp-2) var(--cw-sp-3); border-radius: var(--cw-r-sm); font-size: var(--cw-fs-sm);
+font-weight: 500; color: var(--cw-ink-2); cursor: pointer; transition: var(--cw-dur) var(--cw-ease); }
+.nav-link:hover, .nav-link.active { background: var(--cw-accent-soft); color: var(--cw-ink); }
+.page { display: none; padding: var(--cw-sp-5); max-width: 1100px; margin: 0 auto; }
+.page.active { display: block; }
+.btn { display: inline-flex; align-items: center; gap: var(--cw-sp-2); padding: 0 var(--cw-sp-4);
+height: var(--cw-h-btn); border-radius: var(--cw-r-sm); font-size: var(--cw-fs-sm); font-weight: 500;
+cursor: pointer; border: none; transition: var(--cw-dur) var(--cw-ease); }
+.btn-primary { background: var(--cw-accent); color: #fff; }
+.btn-primary:hover { background: var(--cw-accent-h); }
+.btn-outline { background: transparent; border: 1px solid var(--cw-border-strong); color: var(--cw-ink); }
+.btn-outline:hover { background: var(--cw-accent-soft); }
+.btn-ghost { background: transparent; color: var(--cw-ink-2); }
+.btn-ghost:hover { background: var(--cw-accent-soft); color: var(--cw-ink); }
+.btn-sm { height: var(--cw-h-chip); padding: 0 var(--cw-sp-3); font-size: var(--cw-fs-meta); }
+.btn-green { background: var(--cw-green); color: #fff; }
+.card { background: var(--cw-card); border: 1px solid var(--cw-border); border-radius: var(--cw-r-md);
+padding: var(--cw-sp-4); box-shadow: var(--cw-shadow-sm); }
+.tabs { display: flex; gap: var(--cw-sp-1); margin-bottom: var(--cw-sp-4); border-bottom: 1px solid var(--cw-border); }
+.tab { padding: var(--cw-sp-2) var(--cw-sp-4); font-size: var(--cw-fs-sm); font-weight: 500;
+color: var(--cw-ink-2); cursor: pointer; border-bottom: 2px solid transparent; transition: var(--cw-dur) var(--cw-ease); }
+.tab:hover { color: var(--cw-ink); }
+.tab.active { color: var(--cw-ink); border-bottom-color: var(--cw-accent); }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: var(--cw-r-round);
+font-size: var(--cw-fs-micro); font-weight: 500; }
+.badge-red { background: rgba(220,38,38,0.1); color: #dc2626; }
+.badge-orange { background: rgba(234,88,12,0.1); color: #ea580c; }
+.badge-yellow { background: rgba(202,138,4,0.1); color: #ca8a04; }
+.badge-green { background: rgba(22,163,74,0.1); color: #16a34a; }
+.badge-gray { background: var(--cw-card-2); color: var(--cw-ink-2); }
+.flex { display: flex; }
+.gap-2 { gap: var(--cw-sp-2); }
+.gap-3 { gap: var(--cw-sp-3); }
+.gap-4 { gap: var(--cw-sp-4); }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.mt-3 { margin-top: var(--cw-sp-3); }
+.mt-4 { margin-top: var(--cw-sp-4); }
+.mb-3 { margin-bottom: var(--cw-sp-3); }
+.mb-4 { margin-bottom: var(--cw-sp-4); }
+.text-muted { color: var(--cw-ink-2); }
+.text-sm { font-size: var(--cw-fs-sm); }
+.text-meta { font-size: var(--cw-fs-meta); }
+.text-label { font-size: var(--cw-fs-label); text-transform: uppercase; letter-spacing: 0.06em; color: var(--cw-ink-3); }
+.font-semibold { font-weight: 600; }
+.ml-auto { margin-left: auto; }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-logo">Agent <span>Workforce</span></div>
+  <a class="nav-link active" data-page="s4" onclick="showPage('s4')">Tong quan</a>
+  <a class="nav-link" data-page="s2" onclick="showPage('s2')">Queue</a>
+  <a class="nav-link" data-page="s5" onclick="showPage('s5')">Memory</a>
+  <a class="nav-link" data-page="s6" onclick="showPage('s6')">Log</a>
+  <a class="nav-link" data-page="s7" onclick="showPage('s7')">Cai dat</a>
+  <a class="nav-link" data-page="s1" onclick="showPage('s1')">Onboard</a>
+</nav>
+
+<!-- S1: Onboarding -->
+<div id="page-s1" class="page">
+  <div class="card" style="max-width: 600px; margin: var(--cw-sp-8) auto; text-align: center;">
+    <div style="font-size: 48px; margin-bottom: var(--cw-sp-4);">📨</div>
+    <h1 style="font-size: var(--cw-fs-h1); font-weight: 650; margin-bottom: var(--cw-sp-2);">Ket noi Gmail</h1>
+    <p class="text-muted" style="margin-bottom: var(--cw-sp-5); font-size: var(--cw-fs-title);">De em hieu anh va bat dau lam viec</p>
+    <button class="btn btn-primary" style="width: 100%; justify-content: center; height: 44px; font-size: var(--cw-fs-title);">🔗 Ket noi Gmail</button>
+    <div class="text-sm text-muted" style="margin-top: var(--cw-sp-3); background: var(--cw-card-2); padding: var(--cw-sp-3); border-radius: var(--cw-r-sm);">
+      Doc email de tim thread can follow-up &middot; Hoc giong viet tu sent history<br>
+      <strong>KHONG gui neu chua anh duyet</strong> &middot; KHONG train model chung
+    </div>
+  </div>
+</div>
+<!-- S4: Dashboard -->
+<div id="page-s4" class="page active">
+  <div class="flex items-center justify-between mb-4">
+    <h2 style="font-size: var(--cw-fs-h2); font-weight: 650;">Tong quan</h2>
+    <div class="flex gap-2">
+      <span class="badge badge-gray" style="cursor:pointer">Hom nay</span>
+      <span class="badge badge-gray" style="cursor:pointer;background:var(--cw-accent-soft);color:var(--cw-ink)">Tuan nay</span>
+      <span class="badge badge-gray" style="cursor:pointer">Thang</span>
+    </div>
+  </div>
+  <div class="flex gap-3 mb-4" style="flex-wrap:wrap">
+    <div class="card" style="flex:1;min-width:130px"><div class="text-label">Da quet</div><div class="font-semibold" style="font-size:24px">80</div></div>
+    <div class="card" style="flex:1;min-width:130px;border-left:3px solid var(--cw-teal)"><div class="text-label">Theo doi</div><div class="font-semibold" style="font-size:24px">15</div></div>
+    <div class="card" style="flex:1;min-width:130px;border-left:3px solid var(--cw-green)"><div class="text-label">Da xu ly</div><div class="font-semibold" style="font-size:24px">12</div></div>
+    <div class="card" style="flex:1;min-width:130px"><div class="text-label">Ti le duyet</div><div class="font-semibold" style="font-size:24px">87%</div></div>
+    <div class="card" style="flex:1;min-width:130px"><div class="text-label">Phan hoi TB</div><div class="font-semibold" style="font-size:24px">4.2h</div></div>
+  </div>
+  <div class="flex gap-3" style="flex-wrap:wrap">
+    <div class="card" style="flex:2;min-width:280px">
+      <div class="text-label mb-3">Xu huong xu ly (7 ngay)</div>
+      <div style="display:flex;gap:4px;align-items:end;height:80px;padding:0 4px">
+        <div style="flex:1;background:var(--cw-accent-soft);border-radius:6px 6px 0 0;height:40px"></div>
+        <div style="flex:1;background:var(--cw-accent-soft);border-radius:6px 6px 0 0;height:55px"></div>
+        <div style="flex:1;background:var(--cw-green-soft);border-radius:6px 6px 0 0;height:75px"></div>
+        <div style="flex:1;background:var(--cw-accent-soft);border-radius:6px 6px 0 0;height:48px"></div>
+        <div style="flex:1;background:var(--cw-green-soft);border-radius:6px 6px 0 0;height:65px"></div>
+        <div style="flex:1;background:var(--cw-accent-soft);border-radius:6px 6px 0 0;height:30px"></div>
+        <div style="flex:1;background:var(--cw-green-soft);border-radius:6px 6px 0 0;height:52px"></div>
+      </div>
+      <div style="display:flex;gap:4px;margin-top:4px">
+        <span style="flex:1;text-align:center;font-size:10px;color:var(--cw-ink-3)">T2</span>
+        <span style="flex:1;text-align:center;font-size:10px;color:var(--cw-ink-3)">T3</span>
+        <span style="flex:1;text-align:center;font-size:10px;color:var(--cw-ink-3)">T4</span>
+        <span style="flex:1;text-align:center;font-size:10px;color:var(--cw-ink-3)">T5</span>
+        <span style="flex:1;text-align:center;font-size:10px;color:var(--cw-ink-3)">T6</span>
+        <span style="flex:1;text-align:center;font-size:10px;color:var(--cw-ink-3)">T7</span>
+        <span style="flex:1;text-align:center;font-size:10px;color:var(--cw-ink-3)">CN</span>
+      </div>
+    </div>
+    <div class="card" style="flex:1;min-width:220px">
+      <div class="text-label mb-3">Can chu y</div>
+      <div class="flex items-center gap-2 text-sm" style="margin-bottom:8px;color:#dc2626">
+        <span>🚨</span> 3 thread >2 tuan sap nguoi
+      </div>
+      <div class="flex items-center gap-2 text-sm" style="margin-bottom:8px;color:#ca8a04">
+        <span>💰</span> 5 deal cho bao gia
+      </div>
+      <div class="flex items-center gap-2 text-sm" style="color:#dc2626">
+        <span>🔴</span> 2 mail bounce
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S2+S3: Queue + Detail (master-detail) -->
+<div id="page-s2" class="page">
+  <div class="flex items-center justify-between mb-4">
+    <h2 style="font-size: var(--cw-fs-h2);font-weight:650">Queue — 9 viec can quyet dinh</h2>
+    <span class="text-sm text-muted">80 email da xu ly</span>
+  </div>
+  <div class="flex gap-3">
+    <!-- Sidebar: bucket list -->
+    <div style="width: 320px; min-width: 280px;">
+      <div class="card" style="margin-bottom:8px;cursor:pointer;border-left:3px solid #dc2626">
+        <div class="flex items-center gap-2 mb-1"><span class="badge badge-red">1</span><span class="font-semibold text-sm">Bounced</span></div>
+        <div class="text-sm text-muted">Beta LLC — Mail bi tra lai</div>
+      </div>
+      <div class="card" style="margin-bottom:8px;cursor:pointer;border-left:3px solid #ea580c">
+        <div class="flex items-center gap-2 mb-1"><span class="badge badge-orange">2</span><span class="font-semibold text-sm">Can tra loi</span></div>
+        <div class="text-sm text-muted">Company A, Cong ty B</div>
+      </div>
+      <div class="card" style="margin-bottom:8px;cursor:pointer;border-left:3px solid #ca8a04;background:var(--cw-card)">
+        <div class="flex items-center gap-2 mb-1"><span class="badge badge-yellow">2</span><span class="font-semibold text-sm">Da co reply</span></div>
+        <div class="text-sm text-muted">Dich vu C, Doi tac D</div>
+      </div>
+      <div class="card" style="margin-bottom:8px;cursor:pointer;border-left:3px solid #16a34a">
+        <div class="flex items-center gap-2 mb-1"><span class="badge badge-green">4</span><span class="font-semibold text-sm">Can follow-up</span></div>
+        <div class="text-sm text-muted">Bao gia F, Hop dong G, Proposal H, ...</div>
+      </div>
+      <details style="margin-top:4px">
+        <summary class="text-sm text-muted" style="cursor:pointer;padding:8px 12px">1 Co the bo qua &darr;</summary>
+        <div class="text-sm text-muted" style="padding:4px 12px">Tu van N</div>
+      </details>
+    </div>
+    <!-- Detail panel -->
+    <div class="card" style="flex:1">
+      <div class="flex items-center justify-between mb-3">
+        <div><span class="text-meta text-muted">Tu: </span><span class="font-semibold">Anh Tuan &middot; Company A</span></div>
+        <div class="flex gap-2">
+          <span class="badge badge-yellow">Da cho 5 ngay</span>
+          <span class="badge badge-gray">Follow-up 1/3</span>
+        </div>
+      </div>
+      <div class="card" style="background:var(--cw-card-2);margin-bottom:12px">
+        <div class="text-sm text-muted mb-1">Tom tat thread</div>
+        <div class="text-sm">Gui bao gia 25/6. Khach hoi ve timeline. Anh can follow-up de khong mat deal.</div>
+      </div>
+      <div class="card" style="background:var(--cw-accent-soft);margin-bottom:12px">
+        <div class="text-label mb-1">Draft</div>
+        <div class="text-sm">"Chao anh Tuan, em follow-up ve bao gia tuan truoc. Anh can them thong tin gi ve timeline khong a?"</div>
+      </div>
+      <div class="text-meta text-muted" style="margin-bottom:12px;padding:8px 0;border-top:1px solid var(--cw-border)">
+        Tai sao? &rarr; Anh hay viet di thang + cau hoi. Tranh "than ai" (da hoc tu correction)
+      </div>
+      <div class="flex gap-2" style="flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm">✅ Duyet &amp; gui</button>
+        <button class="btn btn-outline btn-sm">✏️ Viet lai</button>
+        <button class="btn btn-ghost btn-sm">😴 Snooze</button>
+        <button class="btn btn-ghost btn-sm">❌ Bo qua</button>
+        <button class="btn btn-ghost btn-sm ml-auto">Mo Gmail</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S5: Operating Memory (3 tabs) -->
+<div id="page-s5" class="page">
+  <h2 style="font-size:var(--cw-fs-h2);font-weight:650;margin-bottom:4px">Operating Memory</h2>
+  <div class="tabs">
+    <span class="tab active" onclick="activateTab('s5',0,this)">Co ban</span>
+    <span class="tab" onclick="activateTab('s5',1,this)">Nang cao</span>
+    <span class="tab" onclick="activateTab('s5',2,this)">Goi y</span>
+  </div>
+  <div class="tab-content active">
+    <div class="card" style="margin-bottom:12px">
+      <div class="text-label mb-2">Identity Summary</div>
+      <div class="flex gap-3 text-sm" style="flex-wrap:wrap">
+        <span>💼 <strong>Viec chinh:</strong> Tu van B2B</span>
+        <span>👥 <strong>Khach:</strong> Startup goi von + Agency nho</span>
+        <span>🗣️ <strong>Giong:</strong> Trang trong, co so lieu</span>
+        <span>⏰ <strong>Gio lam:</strong> Sang - 22h, reply toi muon</span>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="text-label mb-2">Voice Profile</div>
+      <div class="text-sm" style="margin-bottom:8px">
+        <div style="padding:8px;background:var(--cw-card-2);border-radius:6px;margin-bottom:6px">
+          "Cam on anh da quan tam. Ben em xin gui bao gia chi tiet nhu dinh kem."
+        </div>
+        <div style="padding:8px;background:var(--cw-card-2);border-radius:6px">
+          "Follow-up ve proposal tuan truoc. Anh can them thong tin gi khong a?"
+        </div>
+      </div>
+      <div class="flex gap-2 items-center text-sm">
+        <span class="text-muted">Tranh:</span>
+        <span class="badge badge-gray" style="cursor:pointer">Than ai ✕</span>
+        <span class="badge badge-gray" style="cursor:pointer">Rat mong ✕</span>
+        <span class="text-meta text-muted">(click de bo)</span>
+      </div>
+    </div>
+    <div class="flex gap-3 text-sm">
+      <span class="text-muted">⏱ Cadence: 3 ngay / 3 lan / 22h-8h yen</span>
+      <span class="text-muted">🚫 Exclude: 2 contact, 1 domain</span>
+    </div>
+  </div>
+  <div class="tab-content" style="display:none">
+    <div class="card" style="margin-bottom:12px">
+      <div class="text-label mb-2">Giong theo quan he</div>
+      <div class="flex gap-3 text-sm" style="flex-wrap:wrap">
+        <span><strong>Khach moi:</strong> "Kinh gui anh/chi..."</span>
+        <span><strong>Khach cu:</strong> "Chao anh..."</span>
+        <span><strong>Doi tac:</strong> "Anh oi, vu ben A ?"</span>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="text-label mb-2">Draft mau duoc duyet</div>
+      <div class="text-sm">Bao gia = doan + PDF, Lich = 2 cau</div>
+    </div>
+    <div class="card">
+      <div class="text-label mb-2">Corrections history</div>
+      <div class="text-sm">"Cam on da nhan" &ne; reply thuc chat (05/07 #T12)</div>
+    </div>
+  </div>
+  <div class="tab-content" style="display:none">
+    <div class="card" style="margin-bottom:8px">
+      <div class="flex items-center justify-between">
+        <div><span class="font-semibold text-sm">💡</span> <span class="text-sm">Uu tien VIP: contact@companyA.com</span><br><span class="text-meta text-muted">5/5 lan duyet nhanh, chua dismiss</span></div>
+        <div class="flex gap-2"><button class="btn btn-sm btn-primary">✅</button><button class="btn btn-sm btn-ghost">❌</button></div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:8px">
+      <div class="flex items-center justify-between">
+        <div><span class="font-semibold text-sm">💡</span> <span class="text-sm">Loai domain: newsletter.io</span><br><span class="text-meta text-muted">3 thread deu bi dismiss</span></div>
+        <div class="flex gap-2"><button class="btn btn-sm btn-primary">✅</button><button class="btn btn-sm btn-ghost">❌</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S6: Activity Log -->
+<div id="page-s6" class="page">
+  <div class="flex items-center justify-between mb-4">
+    <h2 style="font-size:var(--cw-fs-h2);font-weight:650">Activity Log</h2>
+    <div class="flex gap-2">
+      <span class="badge badge-gray" style="cursor:pointer">Tat ca</span>
+      <span class="badge badge-gray" style="cursor:pointer;background:var(--cw-accent-soft);color:var(--cw-ink)">Hom nay</span>
+      <span class="badge badge-gray" style="cursor:pointer">Tuan nay</span>
+      <input placeholder="🔍 Tim" style="border:1px solid var(--cw-border);border-radius:var(--cw-r-round);padding:4px 12px;font-size:13px;width:180px" />
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+    <div class="card" style="cursor:pointer">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-meta text-muted">10:23</span>
+        <span class="badge badge-gray" style="background:var(--cw-teal);color:#fff">Phan loai</span>
+        <span class="font-semibold text-sm">#T12</span>
+        <span class="text-sm text-muted">5 ngay, co "bao gia" &rarr; awaiting_review</span>
+      </div>
+      <details class="text-meta text-muted" style="margin-left:44px">
+        <summary style="cursor:pointer">Xem chi tiet agent_thought</summary>
+        Agent nghi: "Thread #T12: last_actor=user, days_since=5, confidence=cao (subject co 'bao gia')"
+      </details>
+    </div>
+    <div class="card" style="cursor:pointer">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-meta text-muted">10:24</span>
+        <span class="badge badge-gray" style="background:var(--cw-accent);color:#fff">Draft</span>
+        <span class="font-semibold text-sm">#T12</span>
+        <span class="text-sm text-muted">Giong trang trong, ngan</span>
+      </div>
+    </div>
+    <div class="card" style="cursor:pointer">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-meta text-muted">10:25</span>
+        <span class="badge badge-green">User duyet</span>
+        <span class="font-semibold text-sm">#T12</span>
+        <span class="text-sm text-muted">Da gui (khong sua)</span>
+      </div>
+    </div>
+    <div class="card" style="cursor:pointer">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-meta text-muted">14:00</span>
+        <span class="badge badge-green">Phat hien reply</span>
+        <span class="font-semibold text-sm">#T12</span>
+        <span class="text-sm text-muted">&rarr; De xuat dong</span>
+      </div>
+      <details class="text-meta text-muted" style="margin-left:44px">
+        <summary style="cursor:pointer">Xem chi tiet memory_impact</summary>
+        Ghi nhan pattern close: "Cam on, da duyet" = reply thuc chat
+      </details>
+    </div>
+    <div class="card" style="cursor:pointer;border-left:3px solid #dc2626">
+      <div class="flex items-center gap-2 mb-1">
+        <span class="text-meta text-muted">09:00</span>
+        <span class="badge badge-red">Bounced</span>
+        <span class="font-semibold text-sm">#T15</span>
+        <span class="text-sm text-muted">Beta LLC — NDR</span>
+      </div>
+    </div>
+  </div>
+  <div class="flex items-center justify-between mt-4">
+    <span class="text-sm text-muted" style="cursor:pointer">Xem them 32 su kien...</span>
+    <button class="btn btn-outline btn-sm">📥 Xuat CSV</button>
+  </div>
+</div>
+
+<!-- S7: Cai dat (4 tabs) -->
+<div id="page-s7" class="page">
+  <h2 style="font-size:var(--cw-fs-h2);font-weight:650;margin-bottom:4px">Cai dat</h2>
+  <div class="tabs">
+    <span class="tab active" onclick="activateTab('s7',0,this)">Cadence</span>
+    <span class="tab" onclick="activateTab('s7',1,this)">Exclude</span>
+    <span class="tab" onclick="activateTab('s7',2,this)">Thong bao</span>
+    <span class="tab" onclick="activateTab('s7',3,this)">Rieng tu</span>
+  </div>
+  <div class="tab-content active">
+    <div class="card">
+      <div class="flex items-center justify-between mb-3">
+        <div><span class="font-semibold text-sm">Nguong ngay</span><br><span class="text-meta text-muted">Bao nhieu ngay khong reply thi bat dau de y</span></div>
+        <div style="width:200px"><input type="range" min="1" max="14" value="3" style="width:100%" /><span class="text-sm text-muted" style="text-align:right;display:block">3 ngay</span></div>
+      </div>
+      <div class="flex items-center justify-between mb-3">
+        <div><span class="font-semibold text-sm">Cap moi thread</span><br><span class="text-meta text-muted">Toi da follow-up cho 1 thread</span></div>
+        <div style="width:200px"><input type="range" min="1" max="10" value="3" style="width:100%" /><span class="text-sm text-muted" style="text-align:right;display:block">3 lan</span></div>
+      </div>
+      <div class="flex items-center justify-between mb-3">
+        <div><span class="font-semibold text-sm">Cap VIP</span><br><span class="text-meta text-muted">Rieng cho contact VIP</span></div>
+        <div style="width:200px"><input type="range" min="1" max="10" value="5" style="width:100%" /><span class="text-sm text-muted" style="text-align:right;display:block">5 lan</span></div>
+      </div>
+      <div class="flex items-center justify-between mb-3">
+        <div><span class="font-semibold text-sm">Gio lam viec</span></div>
+        <span class="text-sm">08:00 - 22:00</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <div><span class="font-semibold text-sm">Ngay lam viec</span></div>
+        <span class="text-sm">Thu 2 - Thu 7</span>
+      </div>
+    </div>
+  </div>
+  <div class="tab-content" style="display:none">
+    <div class="card">
+      <div class="text-label mb-2">Excluded contacts</div>
+      <div class="flex items-center justify-between text-sm" style="margin-bottom:8px">
+        <span>hr@internal.com</span><span class="text-muted text-meta">Noi bo</span><span style="cursor:pointer">✕</span>
+      </div>
+      <div class="flex items-center justify-between text-sm" style="margin-bottom:12px">
+        <span>no-reply@newsletter.com</span><span class="text-muted text-meta">Newsletter</span><span style="cursor:pointer">✕</span>
+      </div>
+      <div class="text-label mb-2 mt-3">Excluded domains</div>
+      <div class="flex items-center justify-between text-sm" style="margin-bottom:8px">
+        <span>*.internal-group.com</span><span style="cursor:pointer">✕</span>
+      </div>
+      <div class="flex items-center justify-between text-sm" style="margin-bottom:12px">
+        <span>*.newsletter.io</span><span style="cursor:pointer">✕</span>
+      </div>
+      <button class="btn btn-outline btn-sm">+ Them contact</button>
+    </div>
+  </div>
+  <div class="tab-content" style="display:none">
+    <div class="card">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-sm">Digest sang (07:00)</span>
+        <span style="width:40px;height:22px;background:var(--cw-accent);border-radius:11px;cursor:pointer;position:relative">
+          <span style="position:absolute;right:3px;top:2px;width:18px;height:18px;background:#fff;border-radius:50%"></span>
+        </span>
+      </div>
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-sm text-muted">Digest chieu</span>
+        <span style="width:40px;height:22px;background:var(--cw-card-2);border-radius:11px;cursor:pointer;position:relative">
+          <span style="position:absolute;left:3px;top:2px;width:18px;height:18px;background:#fff;border-radius:50%"></span>
+        </span>
+      </div>
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-sm">Alert NDR / bounced (real-time)</span>
+        <span style="width:40px;height:22px;background:var(--cw-accent);border-radius:11px;cursor:pointer;position:relative">
+          <span style="position:absolute;right:3px;top:2px;width:18px;height:18px;background:#fff;border-radius:50%"></span>
+        </span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-sm">Push desktop</span>
+        <span style="width:40px;height:22px;background:var(--cw-accent);border-radius:11px;cursor:pointer;position:relative">
+          <span style="position:absolute;right:3px;top:2px;width:18px;height:18px;background:#fff;border-radius:50%"></span>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="tab-content" style="display:none">
+    <div class="card">
+      <div class="flex items-center justify-between mb-4">
+        <div><span class="font-semibold text-sm">🗑️ Xoa giong da hoc</span><br><span class="text-meta text-muted">Draft se ve mac dinh</span></div>
+        <button class="btn btn-outline btn-sm" style="color:#dc2626;border-color:#dc2626">Xoa</button>
+      </div>
+      <div class="flex items-center justify-between mb-4">
+        <div><span class="font-semibold text-sm">🗑️ Xoa lich su corrections</span><br><span class="text-meta text-muted">Mat pattern da sua</span></div>
+        <button class="btn btn-outline btn-sm" style="color:#dc2626;border-color:#dc2626">Xoa</button>
+      </div>
+      <div class="flex items-center justify-between mb-4">
+        <div><span class="font-semibold text-sm">📥 Export du lieu</span><br><span class="text-meta text-muted">Download JSON gom threads, memory, settings</span></div>
+        <button class="btn btn-outline btn-sm">Export</button>
+      </div>
+      <div class="flex items-center justify-between" style="border-top:1px solid var(--cw-border);padding-top:16px">
+        <div><span class="font-semibold text-sm" style="color:#dc2626">⛔ Xoa toan bo &amp; Ngat ket noi</span><br><span class="text-meta text-muted">Khong the undo. Phai ket noi lai tu dau.</span></div>
+        <button class="btn btn-sm" style="background:#dc2626;color:#fff">Xoa toan bo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelector(`.nav-link[data-page="${id}"]`).classList.add('active');
+}
+function activateTab(pageId, idx, el) {
+  const page = document.getElementById('page-' + pageId);
+  const tabs = page.querySelectorAll('.tab');
+  const contents = page.querySelectorAll('.tab-content');
+  tabs.forEach(t => t.classList.remove('active'));
+  contents.forEach(c => c.style.display = 'none');
+  el.classList.add('active');
+  contents[idx].style.display = 'block';
+}
+</script>
+</body>
+</html>
