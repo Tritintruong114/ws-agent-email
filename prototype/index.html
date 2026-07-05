@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Agent Workforce — Email Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-logo">📨 Agent <span>Workforce</span></div>
+  <a class="nav-link" data-page="s4" onclick="App.nav('s4')">Tong quan</a>
+  <a class="nav-link" data-page="s2" onclick="App.nav('s2')">Queue</a>
+  <a class="nav-link" data-page="s5" onclick="App.nav('s5')">Memory</a>
+  <a class="nav-link" data-page="s6" onclick="App.nav('s6')">Log</a>
+  <a class="nav-link" data-page="s7" onclick="App.nav('s7')">Cai dat</a>
+</nav>
+
+<div id="page-s1" class="page active"></div>
+<div id="page-s4" class="page"></div>
+<div id="page-s2" class="page"></div>
+<div id="page-s5" class="page"></div>
+<div id="page-s6" class="page"></div>
+<div id="page-s7" class="page"></div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

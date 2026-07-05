@@ -71,3 +71,12 @@ tmp/
 temp/
 *.tmp
 *.bak
+
+
+# Build artifacts
+dist/
+node_modules/
+
+# Build artifacts
+dist/
+node_modules/
