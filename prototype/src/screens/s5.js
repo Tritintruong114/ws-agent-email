@@ -1,7 +1,7 @@
 import { state, save, toast } from '../state.js';
 import { VOICE_PROFILE, SUGGESTIONS } from '../../data/mock.js';
 
-const TABS = ['Co ban', 'Nang cao', 'Goi y'];
+const TABS = ['Cơ bản', 'Nâng cao', 'Gợi ý'];
 let accepted = new Set();
 let rejected = new Set();
 
@@ -9,8 +9,12 @@ export function render() {
   if (!state.memoryTab) save('memoryTab', 0);
   const tab = state.memoryTab || 0;
   const vp = VOICE_PROFILE;
+  
   document.getElementById('page-s5').innerHTML = `
     <h2 style="font-size:var(--cw-fs-h2);font-weight:650;margin-bottom:4px">Operating Memory</h2>
+    <p style="font-size:var(--cw-fs-sm);color:var(--cw-ink-2);margin-bottom:16px">
+      Agent ghi nhớ giọng văn, khách hàng và quy tắc từ các lần bạn sửa
+    </p>
     <div class="tabs">
       ${TABS.map((t,i) => `<span class="tab ${i === tab ? 'active' : ''}" onclick="App.memoryTab(${i})">${t}</span>`).join('')}
     </div>
@@ -21,27 +25,23 @@ export function render() {
 function renderCoBan(vp) {
   return `
     <div class="card mb-3">
-      <div class="text-label mb-2">Identity Summary</div>
-      <div class="flex gap-3 text-sm flex-wrap">
-        <span>💼 <strong>Viec chinh:</strong> Tu van B2B</span>
-        <span>👥 <strong>Khach:</strong> Startup goi von + Agency nho</span>
-        <span>🗣️ <strong>Giong:</strong> Trang trong, co so lieu</span>
-        <span>⏰ <strong>Gio lam:</strong> Sang - 22h, reply toi muon</span>
+      <div class="text-label mb-2">Hồ sơ người dùng</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:var(--cw-fs-sm)">
+        <span class="text-muted">Việc chính</span><span>Tư vấn B2B</span>
+        <span class="text-muted">Khách hàng</span><span>Startup gọi vốn + Agency nhỏ</span>
+        <span class="text-muted">Giọng văn</span><span>Trang trọng, có số liệu</span>
+        <span class="text-muted">Giờ làm</span><span>Sáng - 22h, reply tối muộn</span>
       </div>
     </div>
-    <div class="card mb-3">
-      <div class="text-label mb-2">Voice Profile</div>
-      <div class="text-sm mb-3">
-        ${vp.samples.map(s => `<div style="padding:8px;background:var(--cw-card-2);border-radius:6px;margin-bottom:6px">${s}</div>`).join('')}
+    <div class="card">
+      <div class="text-label mb-2">Giọng văn đã học</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px">
+        ${vp.samples.map(s => `<div style="padding:8px;background:var(--cw-card-2);border-radius:6px;font-size:var(--cw-fs-sm)">${s}</div>`).join('')}
       </div>
-      <div class="flex gap-2 items-center text-sm flex-wrap">
-        <span class="text-muted">Tranh:</span>
-        ${vp.avoided.map(a => `<span class="badge badge-gray" style="cursor:pointer" onclick="toast('Da bo: ${a}')">${a} ✕</span>`).join(' ')}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;font-size:var(--cw-fs-sm)">
+        <span class="text-muted">Tránh:</span>
+        ${vp.avoided.map(a => `<span class="badge badge-gray" style="cursor:pointer" onclick="toast('Đã bỏ: ${a}')">${a}</span>`).join(' ')}
       </div>
-    </div>
-    <div class="flex gap-3 text-sm flex-wrap">
-      <span class="text-muted">⏱ Cadence: 3 ngay / 3 lan / 22h-8h yen</span>
-      <span class="text-muted">🚫 Exclude: 2 contact, 1 domain</span>
     </div>
   `;
 }
@@ -50,40 +50,40 @@ function renderNangCao(vp) {
   const tb = vp.toneByRelationship;
   return `
     <div class="card mb-3">
-      <div class="text-label mb-2">Giong theo quan he</div>
-      <div class="flex gap-3 text-sm flex-wrap">
-        <span><strong>Khach moi:</strong> ${tb.new}</span>
-        <span><strong>Khach cu:</strong> ${tb.existing}</span>
-        <span><strong>Doi tac:</strong> ${tb.partner}</span>
+      <div class="text-label mb-2">Giọng theo quan hệ</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:var(--cw-fs-sm)">
+        <span class="text-muted">Khách mới</span><span>${tb.new}</span>
+        <span class="text-muted">Khách cũ</span><span>${tb.existing}</span>
+        <span class="text-muted">Đối tác</span><span>${tb.partner}</span>
       </div>
     </div>
     <div class="card mb-3">
-      <div class="text-label mb-2">Draft mau duoc duyet</div>
-      <div class="text-sm">${vp.approvedDrafts.map(d => `${d.subject}: ${d.pattern}`).join('<br>')}</div>
+      <div class="text-label mb-2">Draft mẫu đã duyệt</div>
+      <div style="font-size:var(--cw-fs-sm)">${vp.approvedDrafts.map(d => `${d.subject}: ${d.pattern}`).join('<br>')}</div>
     </div>
     <div class="card">
-      <div class="text-label mb-2">Corrections history</div>
-      <div class="text-sm">"Cam on da nhan" &ne; reply thuc chat (05/07 #T08)</div>
-      <div class="text-sm mt-2">"Khi nao co the call?" la cau hoi moi, can de y (04/07 #T22)</div>
+      <div class="text-label mb-2">Lịch sử sửa</div>
+      <div style="font-size:var(--cw-fs-sm)">"Cảm ơn đã nhận" # reply thực chất (05/07 #T08)</div>
+      <div style="font-size:var(--cw-fs-sm);margin-top:6px">"Khi nào có thể call?" là câu hỏi mới, cần để ý (04/07 #T22)</div>
     </div>
   `;
 }
 
 function renderGoiY() {
-  const suggestions = SUGGESTIONS;
-  return `<div class="text-sm text-muted mb-3">${suggestions.length} de xuat tu Operating Memory — dang cho xac nhan</div>
-    ${suggestions.map(s => `
+  return `
+    <p style="font-size:var(--cw-fs-sm);color:var(--cw-ink-2);margin-bottom:12px">${SUGGESTIONS.length} đề xuất từ Operating Memory</p>
+    ${SUGGESTIONS.map(s => `
       <div class="card mb-2" style="${accepted.has(s.id) ? 'opacity:0.6' : ''}">
         <div class="flex items-center justify-between">
           <div>
-            <span class="font-semibold text-sm">💡 ${s.text}</span><br>
-            <span class="text-meta text-muted">${s.reason}</span>
+            <span class="font-semibold text-sm">${s.text}</span><br>
+            <span style="font-size:var(--cw-fs-meta);color:var(--cw-ink-2)">${s.reason}</span>
           </div>
-          <div class="flex gap-2">
+          <div class="flex gap-2" style="flex-shrink:0">
             ${!accepted.has(s.id) ? `
-              <button class="btn btn-sm btn-primary" onclick="App.suggestionAction('${s.id}','accept')">✅</button>
-              <button class="btn btn-sm btn-ghost" onclick="App.suggestionAction('${s.id}','reject')">❌</button>
-            ` : '<span class="text-sm text-muted">✅ Da xu ly</span>'}
+              <button class="btn btn-sm btn-primary" onclick="App.suggestionAction('${s.id}','accept')">Chấp nhận</button>
+              <button class="btn btn-sm btn-ghost" onclick="App.suggestionAction('${s.id}','reject')">Bỏ qua</button>
+            ` : '<span style="font-size:var(--cw-fs-sm);color:var(--cw-ink-2)">Đã xử lý</span>'}
           </div>
         </div>
       </div>
@@ -99,10 +99,10 @@ export function setTab(idx) {
 export function suggestionAction(id, action) {
   if (action === 'accept') {
     accepted.add(id);
-    toast('✅ Da xac nhan de xuat');
+    toast('Đã chấp nhận đề xuất');
   } else {
     rejected.add(id);
-    toast('❌ Da bac de xuat');
+    toast('Đã bỏ qua đề xuất');
   }
   render();
 }
