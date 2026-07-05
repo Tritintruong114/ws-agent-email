@@ -37,7 +37,6 @@ Solopreneur email-centric (consultant, coach, freelancer, agency-1-nguoi), deskt
   - Action labels: primary=Ket noi Gmail · secondary=Bat dau dung (sau identity_summary)
   - Empty-state: hay an "Ket noi Gmail" de bat dau
 
-{ENDMARKER}
 
 ### S2 — Hang doi "Viec can xu ly hom nay"
 - Purpose (1 line): Hoi dap cau hoi "Toi can xu ly cai gi?" — danh sach quyet dinh cuoi cung sau khi assistant da loc, phan loai, soan draft san.
@@ -269,54 +268,6 @@ Solopreneur email-centric (consultant, coach, freelancer, agency-1-nguoi), deskt
 - 3-tab layout component
 - Expandable correction items (gioi thieu cu the pattern tu event)
 
-### S7 — Cai dat (Kiem soat agent hoat dong)
-- Purpose (1 line): Kiem soat cach agent lam viec — cadence, exclude, data governance, notification — de agent khong bao gio lam dieu minh khong muon.
-- Serves: J5 (khong muon CRM rieng nhung can kiem soat), Trust safety, Data governance
-- User-day moment: Khi moi bat dau (cai dat lan dau), khi muon chinh threshold/cap, khi can exclude contact, khi nghi ngo ve data
-
-- Layout: 4 tabs (Cadence / Exclude / Thong bao / Du lieu & Bao mat)
-
----
-
-#### Tab 1 — CADENCE (Khi nao agent nhac)
-
-**Input (settings):**
-
-| Cai dat | Mac dinh | Giai thich |
-|---------|----------|------------|
-| **Nguong ngay** (threshold_days) | 3 | Bao nhieu ngay khong reply thi agent bat dau de y |
-| **Cap moi thread** (cap_per_thread) | 3 | Toi da bao nhieu lan follow-up cho 1 thread |
-| **Cap moi thread VIP** | 5 | Rieng cho contact da duoc danh VIP (neu co) |
-| **Gio lam viec** | 08:00-22:00 | Ngoai gio nay, chi luu log, khong gui notification |
-| **Ngay lam viec** | Thu 2 - Thu 7 | Co the bo chu nhat neu khong muon bi lam phien cuoi tuan |
-| **Khoang cach giua cac follow-up** (min_gap_days) | 2 | Toi thieu bao nhieu ngay giua 2 lan follow-up lien tiep |
-| **Tu dong huy follow-up sau N lan vo nghia** (auto_stop_after) | Co (3 lan vo nghia) | Neu thread lien tuc bi dismiss, tu dong stop de khong spam |
-
-**User action:** Dieu chinh slider / nhap so → tu luu (autosave)
-**State change:** CadenceRule updated → ap dung tu thread tiep theo
-
----
-
-#### Tab 2 — EXCLUDE (Ai/topic gi agent khong dong vao)
-
-**Input (settings):**
-
-**Excluded contacts:**
-- List: email · ten · ly do exclude (tu them hoac tu Operating Memory de xuat)
-- Theem: nhap email hoac paste list
-- Xoa: swipe/click X
-
-**Excluded domains:**
-- List: domain · ly do (newsletter, internal, no-reply)
-- Action: Them / Xoa
-
-**Excluded keywords/subjects:**
-- List: tu khoa trong subject (vd "bao cao thang", "invoice", "meeting note")
-- Action: Them / Xoa
-
-**Thread-level exclude:**
-- Da exclude tu S2 (dismiss) → hien o day: thread_id + subject + ly do
-- User action: 
 ### S7 — Cai dat (Kiem soat agent hoat dong)
 - Purpose (1 line): Kiem soat cach agent lam viec — cadence, exclude, data governance, notification — de agent khong bao gio lam dieu minh khong muon.
 - Serves: J5 (khong muon CRM rieng nhung can kiem soat), Trust safety, Data governance
